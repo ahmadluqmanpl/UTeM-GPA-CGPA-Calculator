@@ -4,6 +4,19 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 > This calculator is an unofficial student-made tool and is not affiliated with Universiti Teknikal Malaysia Melaka (UTeM). Always verify results against official academic records and current university policies.
 
+## Download
+
+<div align="center">
+
+[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.0-setup.exe)
+
+[![View Latest Release](https://img.shields.io/badge/View-Latest%20Release-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)
+
+</div>
+
+> Windows may show an Unknown Publisher warning because the installer is not code-signed yet.
+
+
 ## Features
 
 - Credit-weighted semester GPA and overall CGPA calculations
