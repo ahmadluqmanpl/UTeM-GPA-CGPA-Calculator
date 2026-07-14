@@ -12,7 +12,8 @@ test("builds a validated, credit-weighted report model", () => {
       { name: "Semester 2", subjects: [{ name: "Subject B", credit: 1, grade: "A" }, { name: "", credit: "", grade: "" }] }
     ] },
     studentInfo: {
-      studentName: "  Student Example  ", studyLevel: "Degree", programmeCode: "BERG",
+      studentName: "  Student   Example  ", matricNumber: " b032410123 ", advisorName: " dr.   advisor ",
+      studyLevel: "Degree", programmeCode: "BERG",
       programmeName: "Bachelor of Electronic Engineering with Honours",
       faculty: "Fakulti Teknologi Dan Kejuruteraan Elektronik Dan Komputer", mode: "Full-time"
     },
@@ -21,7 +22,9 @@ test("builds a validated, credit-weighted report model", () => {
   assert.equal(model.overall.cgpa, 3.25);
   assert.equal(model.overall.totalCredits, 4);
   assert.equal(model.semesters[1].subjects.length, 1);
-  assert.equal(model.studentInfo.studentName, "Student Example");
+  assert.equal(model.studentInfo.studentName, "STUDENT EXAMPLE");
+  assert.equal(model.studentInfo.matricNumber, "B032410123");
+  assert.equal(model.studentInfo.advisorName, "DR. ADVISOR");
   assert.equal(model.studentInfo.studyLevel, "Degree");
   assert.equal(model.studentInfo.programmeCode, "BERG");
   assert.equal(model.studentInfo.programmeName, "Bachelor of Electronic Engineering with Honours");

@@ -4,7 +4,7 @@ Last updated: 2026-07-14
 
 ## Current task
 
-The GitHub landing-page README and MIT licensing are complete. Electron 39.8.5 verification is also complete.
+The v1.0.1 patch release is prepared and its Windows installer has been built successfully.
 ## Completed
 
 - Created shared GPA/CGPA calculation logic and automated tests.
@@ -41,6 +41,10 @@ The GitHub landing-page README and MIT licensing are complete. Electron 39.8.5 v
 - Verified Electron 39 with 30 automated tests, live startup, first-run profiles, programme selection, GPA/CGPA, renderer reload/restore, filesystem persistence, report preview, the Print IPC path, responsive smoke checks, and a successful NSIS installer build.
 - Added the standard MIT License for the project source, updated all package metadata to `MIT`, and documented that UTeM names, logos, trademarks, and official programme/accreditation information remain with their respective owners.
 - Condensed `README.md` into a first-time visitor landing page while preserving pnpm setup, the online/offline privacy distinction, release commands, disclaimer, MIT terms, and links to detailed project documentation.
+- Added shared uppercase identity normalization for student names, matric numbers, and optional academic advisor names while preserving typing cursors and mixed-case programme/subject names.
+- Fixed the offline last-profile deletion delay by resetting profile state and showing the enabled, focused new-profile form before local disk clearing, with ordered persistence and `try/finally` UI cleanup.
+- Verified one-profile and multi-profile deletion, immediate Add/Edit/profile typing, uppercase saved/reloaded data, report/print-preview output, responsive layouts, and the live Electron startup.
+- Prepared the v1.0.1 patch release: normalized student name, matric number, and academic advisor fields to uppercase; fixed offline profile deletion state so the new-profile form is usable immediately after deleting the last profile; and built the v1.0.1 Windows installer.
 
 ## Pending
 

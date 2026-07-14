@@ -9,10 +9,13 @@
   const programmeCatalog = typeof module === "object" && module.exports
     ? require("./programmeCatalog")
     : root.UTeMProgrammeCatalog;
-  const api = factory(calculatorValidation, programmeCatalog);
+  const identityText = typeof module === "object" && module.exports
+    ? require("./identityText")
+    : root.IdentityText;
+  const api = factory(calculatorValidation, programmeCatalog, identityText);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.OfflineProfiles = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function (calculatorValidation, programmeCatalog) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (calculatorValidation, programmeCatalog, identityText) {
   "use strict";
 
   const STUDY_LEVELS = Object.freeze(["Diploma", "Degree", "Master", "PhD", "Other"]);
@@ -54,13 +57,13 @@
     const calculator = calculatorValidation.validateCalculatorData({ semesters: value.semesters });
     return {
       id: validateId(value.id),
-      studentName: text(value.studentName, "Student name", PROFILE_LIMITS.maxStudentNameLength, true),
-      matricNumber: text(value.matricNumber, "Matric number", PROFILE_LIMITS.maxMatricNumberLength, true),
+      studentName: text(identityText.normalizeIdentityText(value.studentName), "Student name", PROFILE_LIMITS.maxStudentNameLength, true),
+      matricNumber: text(identityText.normalizeIdentityText(value.matricNumber), "Matric number", PROFILE_LIMITS.maxMatricNumberLength, true),
       studyLevel,
       programme: text(value.programme, "Programme", PROFILE_LIMITS.maxProgrammeLength, true),
       programmeCode: text(value.programmeCode ?? "", "Programme code", PROFILE_LIMITS.maxProgrammeCodeLength),
       programmeFaculty: text(value.programmeFaculty ?? "", "Faculty", PROFILE_LIMITS.maxFacultyLength),
-      advisorName: text(value.advisorName ?? "", "Academic advisor name", PROFILE_LIMITS.maxAdvisorNameLength),
+      advisorName: text(identityText.normalizeIdentityText(value.advisorName ?? ""), "Academic advisor name", PROFILE_LIMITS.maxAdvisorNameLength),
       semesters: calculator.semesters
     };
   }

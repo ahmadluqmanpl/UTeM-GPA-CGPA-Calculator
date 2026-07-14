@@ -25,10 +25,10 @@
       </div>
       <form id="profileForm" novalidate>
         <div class="profile-form-grid">
-          <label>Student name *<input id="profileStudentName" maxlength="100" autocomplete="name" required></label>
-          <label>Matric number *<input id="profileMatricNumber" maxlength="30" autocomplete="off" required></label>
+          <label>Student name *<input id="profileStudentName" data-identity-field maxlength="100" autocomplete="name" required></label>
+          <label>Matric number *<input id="profileMatricNumber" data-identity-field maxlength="30" autocomplete="off" required></label>
           <label>Study level *<select id="profileStudyLevel" required><option value="">Select study level</option><option>Diploma</option><option>Degree</option><option>Master</option><option value="PhD">Doctorate / PhD</option><option>Other</option></select></label>
-          <label>Academic advisor name <span>Optional</span><input id="profileAdvisorName" maxlength="100" autocomplete="off"></label>
+          <label>Academic advisor name <span>Optional</span><input id="profileAdvisorName" data-identity-field maxlength="100" autocomplete="off"></label>
         </div>
         <div id="programmeSearchGroup" class="programme-picker" hidden>
           <div class="programme-controls">
@@ -86,5 +86,5 @@
       <div id="reportContent" class="report-paper"></div>
     </section>
   </main>
-  <script src="../shared/gpaCore.js"></script><script src="../shared/dataValidation.js"></script><script src="../shared/programmeCatalog.js"></script><script src="../shared/offlineProfiles.js"></script><script src="../shared/report.js"></script><script src="app.js"></script>
+  <script src="../shared/gpaCore.js"></script><script src="../shared/dataValidation.js"></script><script src="../shared/identityText.js"></script><script src="../shared/programmeCatalog.js"></script><script src="../shared/offlineProfiles.js"></script><script src="../shared/report.js"></script><script src="app.js"></script>
 </body></html>

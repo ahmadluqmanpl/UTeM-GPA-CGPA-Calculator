@@ -8,7 +8,7 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 <div align="center">
 
-[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.0-setup.exe)
+[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe)
 
 [![View Latest Release](https://img.shields.io/badge/View-Latest%20Release-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)
 
@@ -24,6 +24,7 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 - Responsive, lightweight interface for laptops and phones
 - Searchable bundled UTeM programme catalogue with manual-entry fallback
 - Multiple local profiles in the offline Windows app
+- Uppercase student names, matric numbers, and academic advisor names in profiles and reports
 - Local report preview and Print / Save as PDF workflow
 - Automated calculation, validation, persistence, security, and Worker tests
 
@@ -61,6 +62,8 @@ pnpm start
 
 The first launch creates a local profile. Programme choices are bundled with the app, and profile changes are restored from the user's local app-data folder.
 
+Identity fields are uppercased while typing. Saved profiles and generated reports also trim surrounding spaces and collapse repeated spaces in student names, matric numbers, and optional academic advisor names.
+
 ## Build Windows installer
 
 From `offline-windows`:
@@ -72,7 +75,7 @@ pnpm run build:installer
 The recommended shareable artifact is written to:
 
 ```text
-offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.0-setup.exe
+offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe
 ```
 
 The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. An optional portable build remains available through `pnpm run build:portable`; see [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.

@@ -36,6 +36,19 @@ test("validates separate GPA data for multiple profiles and remembers the active
   assert.equal(checked.profiles[1].semesters[0].subjects[0].grade, "B");
 });
 
+test("normalizes stored identity fields without changing programme text", () => {
+  const unnormalized = profile("first", "  first   student ", "A");
+  unnormalized.matricNumber = " b032410123 ";
+  unnormalized.advisorName = "  dr.   advisor ";
+  unnormalized.programme = "Bachelor of Mixed Case Studies";
+  const checked = validateOfflineData({ activeProfileId: "first", profiles: [unnormalized] });
+
+  assert.equal(checked.profiles[0].studentName, "FIRST STUDENT");
+  assert.equal(checked.profiles[0].matricNumber, "B032410123");
+  assert.equal(checked.profiles[0].advisorName, "DR. ADVISOR");
+  assert.equal(checked.profiles[0].programme, "Bachelor of Mixed Case Studies");
+});
+
 test("rejects missing profile fields, duplicate IDs, and an unknown active profile", () => {
   const missingName = profile("first", "", "A");
   assert.throws(() => validateOfflineData({ activeProfileId: "first", profiles: [missingName] }), /Student name is required/);

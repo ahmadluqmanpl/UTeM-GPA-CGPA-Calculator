@@ -4,10 +4,13 @@
  * parsing user values as HTML.
  */
 (function (root, factory) {
-  const api = factory();
+  const identityText = typeof module === "object" && module.exports
+    ? require("./identityText")
+    : root.IdentityText;
+  const api = factory(identityText);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.ReportBuilder = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (identityText) {
   "use strict";
 
   const TITLE = "Unofficial UTeM GPA/CGPA Calculator";
@@ -24,6 +27,7 @@
     ["mode", "Mode", 20],
     ["advisorName", "Academic advisor name", 100]
   ]);
+  const IDENTITY_FIELD_KEYS = new Set(["studentName", "matricNumber", "advisorName"]);
 
   function safeText(value, maximum = 100) {
     return typeof value === "string" ? value.trim().slice(0, maximum) : "";
@@ -51,7 +55,12 @@
     }
 
     const information = {};
-    for (const [key, , maximum] of STUDENT_FIELDS) information[key] = safeText(studentInfo[key], maximum);
+    for (const [key, , maximum] of STUDENT_FIELDS) {
+      const value = IDENTITY_FIELD_KEYS.has(key)
+        ? identityText.normalizeIdentityText(studentInfo[key])
+        : safeText(studentInfo[key], maximum);
+      information[key] = value.slice(0, maximum);
+    }
     return {
       title: TITLE,
       disclaimer: DISCLAIMER,

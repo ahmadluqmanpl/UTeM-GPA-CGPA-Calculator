@@ -17,7 +17,10 @@ ipcMain.handle("smoke:load", () => ({
   ok: true,
   imported: savedSmokeData ? { kind: "profiles", data: structuredClone(savedSmokeData) } : null
 }));
-ipcMain.handle("smoke:clear", () => {
+ipcMain.handle("smoke:clear", async () => {
+  // Keep clear in flight long enough to prove the renderer does not wait for
+  // disk I/O before exposing the replacement-profile form.
+  await pause(180);
   savedSmokeData = null;
   return { ok: true };
 });
@@ -114,7 +117,8 @@ async function checkOfflineProfileFlow(window) {
       field.dispatchEvent(new Event("input", { bubbles: true }));
     }
     value("#profileStudentName", '<script>window.profileInjected=true</script>');
-    value("#profileMatricNumber", "B0123456");
+    value("#profileMatricNumber", "b0123456");
+    value("#profileAdvisorName", "dr.  advisor");
     const level = document.querySelector("#profileStudyLevel");
     level.value = "Other";
     level.dispatchEvent(new Event("change", { bubbles: true }));
@@ -127,6 +131,8 @@ async function checkOfflineProfileFlow(window) {
     profileVisible: !document.querySelector("#profileCard").hidden,
     calculatorVisible: !document.querySelector("#calculatorApp").hidden,
     profileName: document.querySelector("#profileCardName").textContent,
+    matricNumber: document.querySelector("#profileCardMatric").textContent,
+    advisorName: document.querySelector("#profileCardAdvisor").textContent,
     injectedNodes: document.querySelectorAll("#profileCard script, #profileCard img").length
   })`);
 
@@ -164,7 +170,69 @@ async function checkOfflineProfileFlow(window) {
     activeName: document.querySelector("#profileCardName").textContent,
     profileCount: document.querySelector("#profileSwitcher").options.length
   })`);
-  return { firstLaunch, catalogue, created, switched, deleted };
+
+  const addAfterDelete = await window.webContents.executeJavaScript(`(() => {
+    document.querySelector('[data-action="add-profile"]').click();
+    const name = document.querySelector("#profileStudentName");
+    name.value = "type now";
+    name.setSelectionRange(4, 4);
+    name.dispatchEvent(new Event("input", { bubbles: true }));
+    const result = {
+      setupVisible: !document.querySelector("#profileSetup").hidden,
+      focused: document.activeElement === name,
+      enabled: !name.disabled,
+      value: name.value,
+      cursor: name.selectionStart
+    };
+    document.querySelector("#cancelProfile").click();
+    return result;
+  })()`);
+
+  const deleteOnlyProfile = await window.webContents.executeJavaScript(`(() => {
+    window.confirm = () => true;
+    document.querySelector('[data-action="delete-profile"]').click();
+    const name = document.querySelector("#profileStudentName");
+    name.value = "  new   student  ";
+    name.setSelectionRange(8, 8);
+    name.dispatchEvent(new Event("input", { bubbles: true }));
+    const immediate = {
+      setupVisible: !document.querySelector("#profileSetup").hidden,
+      cardHidden: document.querySelector("#profileCard").hidden,
+      calculatorHidden: document.querySelector("#calculatorApp").hidden,
+      focused: document.activeElement === name,
+      fieldsEnabled: [...document.querySelectorAll("#profileForm input, #profileForm select")].every(field => !field.disabled),
+      value: name.value,
+      cursor: name.selectionStart,
+      switchPanelHidden: document.querySelector("#profileSwitchPanel").hidden,
+      reportHidden: document.querySelector("#reportPanel").hidden
+    };
+
+    function value(selector, text) {
+      const field = document.querySelector(selector);
+      field.value = text;
+      field.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    value("#profileMatricNumber", " b032410123 ");
+    value("#profileAdvisorName", " dr.   advisor ");
+    const level = document.querySelector("#profileStudyLevel");
+    level.value = "Other";
+    level.dispatchEvent(new Event("change", { bubbles: true }));
+    value("#programmeManual", "Mixed Case Programme");
+    document.querySelector("#profileForm button[type=submit]").click();
+    return immediate;
+  })()`);
+  await pause(350);
+  const replacement = await window.webContents.executeJavaScript(`({
+    profileVisible: !document.querySelector("#profileCard").hidden,
+    name: document.querySelector("#profileCardName").textContent,
+    matricNumber: document.querySelector("#profileCardMatric").textContent,
+    advisorName: document.querySelector("#profileCardAdvisor").textContent,
+    programme: document.querySelector("#profileCardProgramme").textContent,
+    addEnabled: !document.querySelector('[data-action="add-profile"]').disabled,
+    editEnabled: !document.querySelector('[data-action="edit-profile"]').disabled
+  })`);
+  const storedReplacement = structuredClone(savedSmokeData);
+  return { firstLaunch, catalogue, created, switched, deleted, addAfterDelete, deleteOnlyProfile, replacement, storedReplacement };
 }
 
 // Enter one subject in each of two semesters through the actual page controls.
@@ -315,6 +383,23 @@ async function checkReportPreview(window, studentValue, enterStudentValue = true
   })()`);
 }
 
+async function checkOnlineIdentityTyping(window) {
+  return window.webContents.executeJavaScript(`(() => {
+    function type(fieldName, value, cursor) {
+      const input = document.querySelector('[data-student-field="' + fieldName + '"]');
+      input.value = value;
+      input.setSelectionRange(cursor, cursor);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      return { value: input.value, cursor: input.selectionStart };
+    }
+    return {
+      studentName: type("studentName", "student  name", 7),
+      matricNumber: type("matricNumber", "b032410123", 5),
+      advisorName: type("advisorName", "dr.  advisor", 4)
+    };
+  })()`);
+}
+
 async function checkOfflinePrintAction(window) {
   await window.webContents.executeJavaScript(`(() => {
     document.querySelector('#reportPanel [data-action="close-report"]')?.click();
@@ -381,10 +466,35 @@ app.whenReady().then(async () => {
     assert.equal(profiles.catalogue.placeholderVisible, false);
     assert.deepEqual(profiles.created, {
       profileVisible: true, calculatorVisible: true,
-      profileName: '<script>window.profileInjected=true</script>', injectedNodes: 0
+      profileName: '<SCRIPT>WINDOW.PROFILEINJECTED=TRUE</SCRIPT>',
+      matricNumber: "B0123456", advisorName: "DR. ADVISOR", injectedNodes: 0
     });
-    assert.deepEqual(profiles.switched, { activeName: '<script>window.profileInjected=true</script>', profileCount: 2 });
-    assert.deepEqual(profiles.deleted, { activeName: '<script>window.profileInjected=true</script>', profileCount: 1 });
+    assert.deepEqual(profiles.switched, { activeName: '<SCRIPT>WINDOW.PROFILEINJECTED=TRUE</SCRIPT>', profileCount: 2 });
+    assert.deepEqual(profiles.deleted, { activeName: '<SCRIPT>WINDOW.PROFILEINJECTED=TRUE</SCRIPT>', profileCount: 1 });
+    assert.deepEqual(profiles.addAfterDelete, {
+      setupVisible: true, focused: true, enabled: true, value: "TYPE NOW", cursor: 4
+    });
+    assert.deepEqual(profiles.deleteOnlyProfile, {
+      setupVisible: true, cardHidden: true, calculatorHidden: true,
+      focused: true, fieldsEnabled: true, value: "  NEW   STUDENT  ", cursor: 8,
+      switchPanelHidden: true, reportHidden: true
+    });
+    assert.deepEqual(profiles.replacement, {
+      profileVisible: true, name: "NEW STUDENT", matricNumber: "B032410123",
+      advisorName: "DR. ADVISOR", programme: "Mixed Case Programme",
+      addEnabled: true, editEnabled: true
+    });
+    assert.equal(profiles.storedReplacement.profiles.length, 1);
+    assert.equal(profiles.storedReplacement.activeProfileId, profiles.storedReplacement.profiles[0].id);
+    assert.deepEqual({
+      studentName: profiles.storedReplacement.profiles[0].studentName,
+      matricNumber: profiles.storedReplacement.profiles[0].matricNumber,
+      advisorName: profiles.storedReplacement.profiles[0].advisorName,
+      programme: profiles.storedReplacement.profiles[0].programme
+    }, {
+      studentName: "NEW STUDENT", matricNumber: "B032410123",
+      advisorName: "DR. ADVISOR", programme: "Mixed Case Programme"
+    });
     const offlineReloaded = new Promise(resolve => window.webContents.once("did-finish-load", resolve));
     window.webContents.reload();
     await offlineReloaded;
@@ -396,7 +506,7 @@ app.whenReady().then(async () => {
     })`);
     assert.deepEqual(restoredOffline, {
       profileVisible: true,
-      activeName: '<script>window.profileInjected=true</script>',
+      activeName: "NEW STUDENT",
       profileCount: 1
     });
     const emptyOffline = await checkEmptyReport(window);
@@ -408,11 +518,11 @@ app.whenReady().then(async () => {
     assert.ok(offlinePhone.pageWidth <= offlinePhone.viewport);
     assert.equal(offlinePhone.subjectLayout, "grid");
     assertLogo(await inspectLogo(window), "Offline phone");
-    const offlineReport = await checkReportPreview(window, '<script>window.profileInjected=true</script>', false);
+    const offlineReport = await checkReportPreview(window, "NEW STUDENT", false);
     assert.deepEqual(offlineReport, {
       visible: true,
       title: "Unofficial UTeM GPA/CGPA Calculator",
-      studentText: '<script>window.profileInjected=true</script>',
+      studentText: "NEW STUDENT",
       subjectRows: 2,
       scriptNodes: 0,
       privacy: "This report is generated locally on the user’s device. No data is uploaded or stored online.",
@@ -452,14 +562,19 @@ app.whenReady().then(async () => {
       "Faculty": "Fakulti Teknologi Dan Kejuruteraan Elektronik Dan Komputer",
       "Mode": "Full-time"
     });
+    assert.deepEqual(await checkOnlineIdentityTyping(window), {
+      studentName: { value: "STUDENT  NAME", cursor: 7 },
+      matricNumber: { value: "B032410123", cursor: 5 },
+      advisorName: { value: "DR.  ADVISOR", cursor: 4 }
+    });
     const onlinePhone = await checkPhoneLayout(window);
     assert.ok(onlinePhone.pageWidth <= onlinePhone.viewport);
     assert.equal(onlinePhone.subjectLayout, "grid");
     assertLogo(await inspectLogo(window), "Online phone");
-    const onlineReport = await checkReportPreview(window, '<script>window.reportInjected=true</script>', true);
+    const onlineReport = await checkReportPreview(window, '  <script>window.reportInjected=true</script>  ', true);
     assert.equal(onlineReport.visible, true);
     assert.equal(onlineReport.title, "Unofficial UTeM GPA/CGPA Calculator");
-    assert.equal(onlineReport.studentText, '<script>window.reportInjected=true</script>');
+    assert.equal(onlineReport.studentText, '<SCRIPT>WINDOW.REPORTINJECTED=TRUE</SCRIPT>');
     assert.equal(onlineReport.subjectRows, 2);
     assert.equal(onlineReport.scriptNodes, 0);
     assert.equal(onlineReport.closed, true);

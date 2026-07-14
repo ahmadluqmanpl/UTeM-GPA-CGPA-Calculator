@@ -4,6 +4,7 @@ const core = window.GpaCore;
 const validation = window.CalculatorValidation;
 const programmeTools = window.UTeMProgrammeCatalog;
 const reportBuilder = window.ReportBuilder;
+const identityText = window.IdentityText;
 const grades = [...validation.APPROVED_GRADES];
 const limits = validation.LIMITS;
 const programmes = Array.isArray(window.UTeMProgrammes) ? window.UTeMProgrammes : [];
@@ -124,7 +125,9 @@ function setupOnlineProgrammeSelector() {
 function studentInfo() {
   const information = {};
   for (const input of document.querySelectorAll("[data-student-field]")) {
-    information[input.dataset.studentField] = input.value.slice(0, 100);
+    const normalized = identityText.normalizeIdentityText(input.value).slice(0, 100);
+    input.value = normalized;
+    information[input.dataset.studentField] = normalized;
   }
   information.studyLevel = document.querySelector("#onlineStudyLevel").value;
   if (selectedReportProgramme) {
@@ -295,6 +298,10 @@ function renderKeepingFocus(target) {
 }
 
 document.addEventListener("input", event => {
+  if (event.target.matches("[data-identity-field]")) {
+    identityText.uppercaseIdentityInput(event.target);
+    return;
+  }
   const field = event.target.dataset.field;
   if (!field) return;
   const semester = findSemester(event.target);

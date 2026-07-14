@@ -2,15 +2,17 @@ const core = window.GpaCore;
 const validation = window.CalculatorValidation;
 const profileTools = window.OfflineProfiles;
 const reportBuilder = window.ReportBuilder;
+const identityText = window.IdentityText;
 const grades = [...validation.APPROVED_GRADES];
 const limits = validation.LIMITS;
 
-let appState = { version: 2, activeProfileId: "", profiles: [] };
+let appState = { version: 2, activeProfileId: null, profiles: [] };
 let programmes = [];
 let selectedProgramme = null;
 let editingProfileId = null;
 let pendingLegacySemesters = null;
 let autoSaveTimer = null;
+let persistenceQueue = Promise.resolve();
 
 function setupLogoFallback() {
   const logo = document.querySelector(".brand-logo");
@@ -78,14 +80,38 @@ function activeCalculatorData() {
   return { version: 1, semesters: profile ? profile.semesters : [newSemester(1)] };
 }
 
-async function saveNow(successMessage = "") {
+function cancelScheduledAutoSave() {
   clearTimeout(autoSaveTimer);
   autoSaveTimer = null;
+}
+
+// Profile deletion and a fast subsequent profile save can overlap. Keeping
+// local-file IPC in order prevents an older clear/save from winning the race.
+function queuePersistence(operation) {
+  const pending = persistenceQueue.then(operation, operation);
+  persistenceQueue = pending.catch(() => {});
+  return pending;
+}
+
+async function saveNow(successMessage = "") {
+  cancelScheduledAutoSave();
   if (!appState.profiles.length) return { ok: true };
-  const result = await window.calculator.save(appState);
+  const snapshot = structuredClone(appState);
+  const result = await queuePersistence(() => window.calculator.save(snapshot));
   if (!result.ok) status(`Save failed: ${result.error}`);
   else if (successMessage) status(successMessage);
   return result;
+}
+
+function setProfileFormBusy(busy) {
+  const form = document.querySelector("#profileForm");
+  form.setAttribute("aria-busy", String(busy));
+  for (const control of form.querySelectorAll("input, select, button")) control.disabled = busy;
+}
+
+function closeTransientPanels() {
+  document.querySelector("#profileSwitchPanel").hidden = true;
+  document.querySelector("#reportPanel").hidden = true;
 }
 
 function scheduleAutoSave() {
@@ -397,6 +423,7 @@ function configureProgrammeEntry(preferredValue = "") {
 }
 
 function showProfileEditor(profile = null) {
+  setProfileFormBusy(false);
   editingProfileId = profile?.id || null;
   selectedProgramme = null;
   document.querySelector("#profileCard").hidden = true;
@@ -430,28 +457,37 @@ function showProfileEditor(profile = null) {
 
 document.querySelector("#profileForm").addEventListener("submit", async event => {
   event.preventDefault();
-  const studentName = document.querySelector("#profileStudentName").value;
-  const matricNumber = document.querySelector("#profileMatricNumber").value;
-  const studyLevel = document.querySelector("#profileStudyLevel").value;
-  const advisorName = document.querySelector("#profileAdvisorName").value;
-  const manualProgramme = document.querySelector("#programmeManual").value;
-  const programme = selectedProgramme ? programmeLabel(selectedProgramme) : manualProgramme;
-  const existing = appState.profiles.find(profile => profile.id === editingProfileId);
-  const profile = {
-    id: existing?.id || crypto.randomUUID(),
-    studentName,
-    matricNumber,
-    studyLevel,
-    programme,
-    programmeCode: selectedProgramme?.programCode || "",
-    programmeFaculty: selectedProgramme?.faculty || "",
-    advisorName,
-    semesters: existing?.semesters || (pendingLegacySemesters ? hydrateSemesters(pendingLegacySemesters) : [newSemester(1)])
-  };
-  const profiles = existing
-    ? appState.profiles.map(item => item.id === existing.id ? profile : item)
-    : [...appState.profiles, profile];
+  if (event.currentTarget.getAttribute("aria-busy") === "true") return;
+  setProfileFormBusy(true);
   try {
+    const studentNameInput = document.querySelector("#profileStudentName");
+    const matricNumberInput = document.querySelector("#profileMatricNumber");
+    const advisorNameInput = document.querySelector("#profileAdvisorName");
+    const studentName = identityText.normalizeIdentityText(studentNameInput.value);
+    const matricNumber = identityText.normalizeIdentityText(matricNumberInput.value);
+    const advisorName = identityText.normalizeIdentityText(advisorNameInput.value);
+    studentNameInput.value = studentName;
+    matricNumberInput.value = matricNumber;
+    advisorNameInput.value = advisorName;
+
+    const studyLevel = document.querySelector("#profileStudyLevel").value;
+    const manualProgramme = document.querySelector("#programmeManual").value;
+    const programme = selectedProgramme ? programmeLabel(selectedProgramme) : manualProgramme;
+    const existing = appState.profiles.find(profile => profile.id === editingProfileId);
+    const profile = {
+      id: existing?.id || crypto.randomUUID(),
+      studentName,
+      matricNumber,
+      studyLevel,
+      programme,
+      programmeCode: selectedProgramme?.programCode || "",
+      programmeFaculty: selectedProgramme?.faculty || "",
+      advisorName,
+      semesters: existing?.semesters || (pendingLegacySemesters ? hydrateSemesters(pendingLegacySemesters) : [newSemester(1)])
+    };
+    const profiles = existing
+      ? appState.profiles.map(item => item.id === existing.id ? profile : item)
+      : [...appState.profiles, profile];
     const checked = profileTools.validateOfflineData({ version: 2, activeProfileId: profile.id, profiles });
     appState = hydrateOfflineData(checked);
     pendingLegacySemesters = null;
@@ -460,6 +496,8 @@ document.querySelector("#profileForm").addEventListener("submit", async event =>
     await saveNow("Profile saved privately on this computer.");
   } catch (error) {
     document.querySelector("#profileFeedback").textContent = error.message;
+  } finally {
+    setProfileFormBusy(false);
   }
 });
 
@@ -489,6 +527,10 @@ document.querySelector("#cancelProfile").addEventListener("click", () => {
 });
 
 document.addEventListener("input", event => {
+  if (event.target.matches("[data-identity-field]")) {
+    identityText.uppercaseIdentityInput(event.target);
+    return;
+  }
   const field = event.target.dataset.field;
   if (!field) return;
   const semester = findSemester(event.target);
@@ -513,6 +555,40 @@ document.addEventListener("input", event => {
 document.addEventListener("change", event => {
   if (event.target.dataset.field) saveNow().catch(error => status(`Auto-save failed: ${error.message}`));
 });
+
+async function deleteActiveProfile(deleteButton) {
+  const profile = activeProfile();
+  if (!profile || !confirm(`Delete ${profile.studentName} and all GPA data in this profile?`)) return;
+
+  cancelScheduledAutoSave();
+  deleteButton.disabled = true;
+  document.querySelector("#profileCard").setAttribute("aria-busy", "true");
+  try {
+    const profiles = appState.profiles.filter(item => item.id !== profile.id);
+    appState = {
+      ...appState,
+      activeProfileId: profiles.length ? profiles[0].id : null,
+      profiles
+    };
+    editingProfileId = null;
+    pendingLegacySemesters = null;
+    closeTransientPanels();
+
+    if (!profiles.length) {
+      // Make the next profile form interactive before waiting for disk I/O.
+      showProfileEditor();
+      const result = await queuePersistence(() => window.calculator.clear());
+      if (!result.ok) status(`Delete could not be saved: ${result.error}`);
+    } else {
+      renderApp();
+      await saveNow("Profile deleted.");
+    }
+  } finally {
+    deleteButton.disabled = false;
+    document.querySelector("#profileCard").removeAttribute("aria-busy");
+    if (!appState.profiles.length) setProfileFormBusy(false);
+  }
+}
 
 document.addEventListener("click", async event => {
   const action = event.target.closest("[data-action]")?.dataset.action;
@@ -544,18 +620,7 @@ document.addEventListener("click", async event => {
       return;
     }
     if (action === "delete-profile") {
-      const profile = activeProfile();
-      if (!confirm(`Delete ${profile.studentName} and all GPA data in this profile?`)) return;
-      appState.profiles = appState.profiles.filter(item => item.id !== profile.id);
-      if (!appState.profiles.length) {
-        appState.activeProfileId = "";
-        await window.calculator.clear();
-        showProfileEditor();
-      } else {
-        appState.activeProfileId = appState.profiles[0].id;
-        renderApp();
-        await saveNow("Profile deleted.");
-      }
+      await deleteActiveProfile(event.target.closest("[data-action]"));
       return;
     }
     if (action === "close-report") {

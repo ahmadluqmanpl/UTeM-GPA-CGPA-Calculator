@@ -16,12 +16,13 @@ async function main() {
     path.join(__dirname, "..", "..", "shared", "dataValidation.js"),
     path.join(target, "dataValidation.js")
   );
+  await copyFile(path.join(__dirname, "..", "..", "shared", "identityText.js"), path.join(target, "identityText.js"));
   await copyFile(path.join(__dirname, "..", "..", "shared", "report.js"), path.join(target, "report.js"));
   await copyFile(path.join(__dirname, "..", "..", "shared", "report.css"), path.join(target, "report.css"));
   await copyFile(path.join(__dirname, "..", "..", "shared", "programmeCatalog.js"), path.join(target, "programmeCatalog.js"));
   await copyFile(path.join(__dirname, "..", "..", "shared", "offlineProfiles.js"), path.join(target, "offlineProfiles.js"));
   await copyFile(path.join(__dirname, "..", "..", "shared", "utemPrograms.json"), path.join(target, "utemPrograms.json"));
-  console.log("Copied shared GPA logic, validation, offline profiles, programme data, report tools, and interface styles into the Electron app.");
+  console.log("Copied shared GPA logic, validation, identity normalization, offline profiles, programme data, report tools, and interface styles into the Electron app.");
 }
 
 main().catch(error => { console.error(error); process.exitCode = 1; });

@@ -10,6 +10,7 @@ test("production renderers avoid injection and persistence APIs", () => {
   const renderers = [
     read("offline-windows/src/renderer/app.js"),
     read("online-worker/public/app.js"),
+    read("shared/identityText.js"),
     read("shared/report.js")
   ].join("\n");
   assert.doesNotMatch(renderers, /innerHTML|outerHTML|insertAdjacentHTML|\beval\s*\(|new Function/);
