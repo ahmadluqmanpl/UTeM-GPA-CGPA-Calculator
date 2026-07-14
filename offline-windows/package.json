@@ -1,0 +1,62 @@
+{
+  "name": "utem-gpa-calculator-offline",
+  "version": "1.0.0",
+  "description": "Offline Unofficial UTeM GPA and CGPA Calculator",
+  "author": "Ahmad Luqman",
+  "license": "MIT",
+  "private": true,
+  "main": "src/main.js",
+  "scripts": {
+    "copy-shared": "node scripts/copy-shared.js",
+    "prestart": "node scripts/copy-shared.js",
+    "start": "electron .",
+    "prebuild": "node scripts/copy-shared.js",
+    "build": "electron-builder --win nsis",
+    "prebuild:installer": "node scripts/copy-shared.js",
+    "build:installer": "electron-builder --win nsis",
+    "prebuild:portable": "node scripts/copy-shared.js",
+    "build:portable": "electron-builder --win portable",
+    "presmoke": "node scripts/copy-shared.js",
+    "smoke": "electron scripts/smoke-test.js",
+    "predist": "node scripts/copy-shared.js",
+    "dist": "electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "39.8.5",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.student.utemgpacgpa",
+    "productName": "Unofficial UTeM GPA CGPA Calculator",
+    "asar": true,
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "src/main.js",
+      "src/preload.js",
+      "src/dataStore.js",
+      "build/icon.ico",
+      "src/renderer/**/*",
+      "src/shared/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis"]
+    },
+    "portable": {
+      "artifactName": "Unofficial-UTeM-GPA-CGPA-Calculator-${version}-portable.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Unofficial UTeM GPA CGPA Calculator",
+      "artifactName": "Unofficial-UTeM-GPA-CGPA-Calculator-${version}-setup.${ext}"
+    }
+  }
+}

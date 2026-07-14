@@ -1,0 +1,13 @@
+{
+  "name": "utem-gpa-cgpa-calculator",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unofficial UTeM GPA/CGPA Calculator for Windows and Cloudflare Workers",
+  "author": "Ahmad Luqman",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test shared/gpaCore.test.js shared/dataValidation.test.js shared/programmeCatalog.test.js shared/offlineProfiles.test.js shared/report.test.js shared/securitySource.test.js offline-windows/src/dataStore.test.js online-worker/src/worker.test.js",
+    "offline": "pnpm --dir offline-windows start",
+    "online": "pnpm --dir online-worker run dev"
+  }
+}

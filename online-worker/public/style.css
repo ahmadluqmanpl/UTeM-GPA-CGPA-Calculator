@@ -1,0 +1,48 @@
+.session-note {
+  min-height: 72px;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid #cdd9f3;
+  border-radius: var(--radius);
+  background: #f7f9ff;
+  box-shadow: var(--shadow);
+}
+
+.note-icon {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--utem-blue);
+  font-family: Georgia, serif;
+  font-weight: 700;
+}
+
+.session-note strong, .session-note span { display: block; }
+.session-note strong { color: var(--utem-blue-dark); font-size: 13px; }
+.session-note span { margin-top: 2px; color: #68748d; font-size: 12px; }
+
+.report-profile-grid { grid-template-columns: repeat(3, 1fr); }
+.online-programme-details { min-width: 0; margin: 16px 0 0; padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: #f8faff; }
+.online-programme-details legend { padding: 0 6px; color: var(--utem-blue-dark); font-size: 12px; font-weight: 800; }
+.online-programme-grid { display: grid; grid-template-columns: .7fr 1fr 1.4fr; gap: 12px; }
+.online-programme-details label { display: block; }
+.online-programme-details select:disabled { color: #7c879b; background: #eef1f6; cursor: not-allowed; }
+.online-manual-programme { max-width: 620px; margin-top: 12px; }
+.online-manual-programme[hidden] { display: none; }
+.report-profile .online-programme-summary { min-height: 17px; margin-top: 9px; color: #56657d; font-size: 11px; font-weight: 650; }
+
+@media (max-width: 850px) {
+  .report-profile-grid,
+  .online-programme-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .session-note { align-items: flex-start; }
+  .online-programme-details { padding: 13px; }
+}

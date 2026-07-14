@@ -1,0 +1,8 @@
+packages:
+  - "."
+
+# Native packages Wrangler needs when this project is installed with pnpm.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true

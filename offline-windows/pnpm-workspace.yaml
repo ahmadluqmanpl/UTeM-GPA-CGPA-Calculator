@@ -1,0 +1,7 @@
+packages:
+  - "."
+
+# pnpm blocks dependency install scripts unless they are explicitly trusted.
+allowBuilds:
+  electron: true
+  electron-winstaller: true

@@ -1,0 +1,60 @@
+# pnpm dependencies and package-manager alternatives
+node_modules/
+**/node_modules/
+package-lock.json
+**/package-lock.json
+npm-shrinkwrap.json
+
+# Build, installer, and deployment output
+dist/
+**/dist/
+out/
+**/out/
+release/
+**/release/
+coverage/
+**/coverage/
+.wrangler/
+**/.wrangler/
+*.exe
+*.msi
+*.msix
+*.dmg
+*.zip
+*.7z
+*.blockmap
+
+# Logs and temporary files
+*.log
+logs/
+**/logs/
+pnpm-debug.log*
+debug.log*
+tmp/
+temp/
+*.tmp
+
+# Environment files and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.cer
+*.crt
+*.p7b
+*.jks
+*.keystore
+*.mobileprovision
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

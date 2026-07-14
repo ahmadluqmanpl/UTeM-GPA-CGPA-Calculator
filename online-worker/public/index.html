@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Unofficial UTeM GPA/CGPA Calculator</title>
+  <link rel="stylesheet" href="ui.css"><link rel="stylesheet" href="report.css"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="brand-header"><div class="brand-inner">
+    <img src="./assets/utem-logo.png" alt="UTeM logo" class="brand-logo">
+    <div class="brand-text"><p class="brand-label">Unofficial student tool</p><h1>Unofficial UTeM GPA/CGPA Calculator</h1></div>
+    <span class="mode-tag"><span class="mode-dot online"></span>Online calculator</span>
+  </div></header>
+  <section class="hero"><div class="hero-inner">
+    <div class="hero-copy"><span class="eyebrow">ACADEMIC PLANNING, MADE SIMPLE</span><h1>Your grades,<br><em>clearly calculated.</em></h1><p>Calculate semester GPA and overall CGPA clearly—without accounts, tracking, or saved records.</p></div>
+    <div class="formula-card" aria-label="CGPA calculation formula"><span>How it works</span><strong>Grade points <b>÷</b> credit hours</strong><small>One clear result across every semester</small></div>
+  </div></section>
+  <main>
+    <aside class="session-note"><div class="note-icon" aria-hidden="true">i</div><div><strong>Session-only calculator</strong><span>This online version does not save your data. Your entered data will be lost when the page is closed or refreshed.</span></div></aside>
+    <p id="status" class="page-status" role="status"></p>
+    <section class="dashboard" aria-label="Overall summary">
+      <article class="score-card"><div><span>Overall CGPA</span><strong id="cgpa">0.00</strong></div><small>Maximum 4.00</small></article>
+      <article class="metric-card"><span>Total credits</span><strong id="totalCredits">0</strong><small>Credit hours counted</small></article>
+      <article class="metric-card"><span>Grade points</span><strong id="totalPoints">0.00</strong><small>Across all semesters</small></article>
+      <article class="metric-card"><span>Semesters</span><strong id="semesterCount">1</strong><small>In your current plan</small></article>
+    </section>
+    <section class="report-profile" aria-labelledby="reportProfileTitle">
+      <div class="report-profile-heading"><div><h2 id="reportProfileTitle">Optional report details</h2><p>Leave any field blank. These details remain only in this open page.</p></div></div>
+      <div class="report-profile-grid">
+        <label>Student name<input data-student-field="studentName" maxlength="100" autocomplete="off"></label>
+        <label>Matric number<input data-student-field="matricNumber" maxlength="100" autocomplete="off"></label>
+        <label>Academic advisor name<input data-student-field="advisorName" maxlength="100" autocomplete="off"></label>
+      </div>
+      <fieldset class="online-programme-details">
+        <legend>Programme details</legend>
+        <div class="online-programme-grid">
+          <label>Study level
+            <select id="onlineStudyLevel">
+              <option value="">Select study level</option><option>Diploma</option><option>Degree</option><option>Master</option><option value="PhD">Doctorate / PhD</option><option>Other</option>
+            </select>
+          </label>
+          <label>Faculty
+            <select id="onlineFaculty" disabled><option value="">All faculties</option></select>
+          </label>
+          <label>Programme
+            <select id="onlineProgramme" disabled><option value="">Select study level first</option></select>
+          </label>
+        </div>
+        <label id="onlineManualProgrammeGroup" class="online-manual-programme" hidden>Manual programme name
+          <input id="onlineManualProgramme" maxlength="160" autocomplete="off" placeholder="Enter your programme name">
+        </label>
+        <p id="onlineProgrammeSummary" class="online-programme-summary" aria-live="polite"></p>
+      </fieldset>
+      <p class="report-feedback" data-report-feedback role="status"></p>
+      <div class="report-actions-bar"><button data-action="preview-report">Preview report</button><button class="primary" data-action="print-report">Print / Save as PDF</button></div>
+    </section>
+    <section class="section-heading"><div><span class="eyebrow dark">ACADEMIC PLAN</span><h2>Your semesters</h2><p>Add subjects and results update automatically.</p></div><button id="addSemester" class="primary">+ Add semester</button></section>
+    <div id="semesters"></div>
+    <section class="grade-panel"><div class="grade-intro"><span class="eyebrow dark">QUICK REFERENCE</span><h2>UTeM grade scale</h2><p>Grade points used in every calculation.</p></div><div id="gradeScale" class="grade-grid"></div></section>
+    <aside class="disclaimer"><strong>Important</strong><p>This calculator is an unofficial student-made tool and is not affiliated with Universiti Teknikal Malaysia Melaka (UTeM). Please refer to official academic records for final results.</p></aside>
+    <section id="reportPanel" class="report-panel" aria-label="Report preview" hidden>
+      <div class="report-panel-actions no-print"><button data-action="close-report">Close preview</button><button class="primary" data-action="print-report">Print / Save as PDF</button></div>
+      <div id="reportContent" class="report-paper"></div>
+    </section>
+  </main>
+  <script src="gpaCore.js"></script><script src="dataValidation.js"></script><script src="programmeCatalog.js"></script><script src="utemPrograms.js"></script><script src="report.js"></script><script src="app.js"></script>
+</body></html>

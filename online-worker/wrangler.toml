@@ -1,0 +1,11 @@
+name = "unofficial-utem-gpa-calculator"
+main = "src/worker.js"
+compatibility_date = "2025-07-12"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+# Static assets normally bypass Worker code. Run the Worker first so every
+# response receives the security headers and non-read methods are rejected.
+run_worker_first = true
+not_found_handling = "single-page-application"
