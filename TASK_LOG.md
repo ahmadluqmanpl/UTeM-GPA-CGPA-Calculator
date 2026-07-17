@@ -1,6 +1,6 @@
 # Task Log
 
-Last updated: 2026-07-14
+Last updated: 2026-07-17
 
 ## Current task
 
@@ -45,14 +45,13 @@ The v1.0.1 patch release is prepared and its Windows installer has been built su
 - Fixed the offline last-profile deletion delay by resetting profile state and showing the enabled, focused new-profile form before local disk clearing, with ordered persistence and `try/finally` UI cleanup.
 - Verified one-profile and multi-profile deletion, immediate Add/Edit/profile typing, uppercase saved/reloaded data, report/print-preview output, responsive layouts, and the live Electron startup.
 - Prepared the v1.0.1 patch release: normalized student name, matric number, and academic advisor fields to uppercase; fixed offline profile deletion state so the new-profile form is usable immediately after deleting the last profile; and built the v1.0.1 Windows installer.
+- Deployed the online version to the owner's Cloudflare account.
+- Manually tested the NSIS installer on a clean Windows user account, including uninstall, restart persistence, print-to-PDF, and comparative startup timing; all checks passed.
+- Retired the optional portable executable due to slow self-extraction startup times; the NSIS installer is now the sole official release artifact.
 
 ## Pending
 
-- Deploy the online version to the owner's Cloudflare account when requested.
-- Manually test the NSIS installer on a clean Windows user account before wider distribution, including uninstall, restart persistence, print-to-PDF, and comparative startup timing.
-- Rebuild the optional portable executable before sharing it again; the installer is the current verified release artifact.
 - Perform a final human accessibility/usability pass with student testers if the project moves beyond the beginner release.
-- Rebuild and inspect the optional portable executable with Electron 39.8.5 when workspace command approvals are available again.
 
 ## Known issues and limitations
 

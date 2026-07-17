@@ -10,6 +10,8 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 [![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe)
 
+[![Open Live Web App](https://img.shields.io/badge/Open-Live%20Web%20App-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/)
+
 [![View Latest Release](https://img.shields.io/badge/View-Latest%20Release-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)
 
 </div>
@@ -33,7 +35,7 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 | Version | Purpose | Data handling |
 |---|---|---|
 | Offline Windows | Electron desktop app that works without internet | Saves validated profiles and calculator data locally on the user's computer |
-| Online Worker | Cloudflare-hosted calculator for temporary use | Keeps entered data only in page memory and clears it on refresh or close |
+| [Online Worker](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/) | Cloudflare-hosted calculator for temporary use | Keeps entered data only in page memory and clears it on refresh or close |
 
 ## Privacy summary
 
@@ -78,7 +80,7 @@ The recommended shareable artifact is written to:
 offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe
 ```
 
-The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. An optional portable build remains available through `pnpm run build:portable`; see [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.
+The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. The NSIS installer is the sole supported Windows artifact; the optional portable build has been retired. See [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.
 
 ## Run online Worker locally
 
