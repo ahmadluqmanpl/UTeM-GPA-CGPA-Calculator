@@ -10,6 +10,8 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 [![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe)
 
+[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)
+
 [![Open Live Web App](https://img.shields.io/badge/Open-Live%20Web%20App-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/)
 
 [![View Latest Release](https://img.shields.io/badge/View-Latest%20Release-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)

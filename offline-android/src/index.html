@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Content Security Policy: this page is fully self-contained and offline.
+       Scripts, styles, and images load only from the bundled local files; all
+       network connections are refused so no student data can leave the device.
+       Styles must come from the local stylesheets below—never inline—because
+       style-src does not allow 'unsafe-inline'. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'">
+  <title>Unofficial UTeM GPA/CGPA Calculator</title>
+  <link rel="stylesheet" href="shared/ui.css"><link rel="stylesheet" href="shared/report.css"><link rel="stylesheet" href="shared/style.css">
+</head>
+<body>
+  <header class="brand-header"><div class="brand-inner">
+    <img src="./assets/utem-logo.png" alt="UTeM logo" class="brand-logo">
+    <div class="brand-text"><p class="brand-label">Unofficial student tool</p><h1>Unofficial UTeM GPA/CGPA Calculator</h1></div>
+    <span class="mode-tag"><span class="mode-dot"></span>Offline Android</span>
+  </div></header>
+  <section class="hero"><div class="hero-inner">
+    <div class="hero-copy"><span class="eyebrow">ACADEMIC PLANNING, MADE SIMPLE</span><h1>Your grades,<br><em>clearly calculated.</em></h1><p>Plan every semester, understand every point, and keep your academic records privately on this device.</p></div>
+    <div class="formula-card" aria-label="CGPA calculation formula"><span>How it works</span><strong>Grade points <b>÷</b> credit hours</strong><small>One clear result across every semester</small></div>
+  </div></section>
+  <main>
+    <section id="profileSetup" class="profile-setup no-print" aria-labelledby="profileSetupTitle" hidden>
+      <div class="profile-setup-copy">
+        <span class="eyebrow dark">YOUR PRIVATE ACADEMIC SPACE</span>
+        <h2 id="profileSetupTitle">Create your local profile</h2>
+        <p>Your profile and grades stay on this device. Required fields are marked with an asterisk.</p>
+      </div>
+      <form id="profileForm" novalidate>
+        <div class="profile-form-grid">
+          <label>Student name *<input id="profileStudentName" data-identity-field maxlength="100" autocomplete="name" required></label>
+          <label>Matric number *<input id="profileMatricNumber" data-identity-field maxlength="30" autocomplete="off" required></label>
+          <label>Study level *<select id="profileStudyLevel" required><option value="">Select study level</option><option>Diploma</option><option>Degree</option><option>Master</option><option value="PhD">Doctorate / PhD</option><option>Other</option></select></label>
+          <label>Academic advisor name <span>Optional</span><input id="profileAdvisorName" data-identity-field maxlength="100" autocomplete="off"></label>
+        </div>
+        <div id="programmeSearchGroup" class="programme-picker" hidden>
+          <div class="programme-controls">
+            <label>Faculty
+              <select id="programmeFaculty"><option value="">All faculties</option></select>
+            </label>
+            <label>Search programme *
+              <input id="programmeSearch" maxlength="160" autocomplete="off" role="combobox" aria-controls="programmeResults" aria-expanded="false" placeholder="e.g. BERG or Electronic Engineering">
+            </label>
+          </div>
+          <p>All programmes for this level are shown below. Search by level, faculty, code, BM or BI name, accreditation code, or mode.</p>
+          <div id="selectedProgramme" class="selected-programme" hidden></div>
+          <div id="programmeResults" class="programme-results" role="listbox" hidden></div>
+          <button type="button" data-action="manual-programme">My programme is not listed</button>
+        </div>
+        <div id="programmeManualGroup" class="programme-manual" hidden>
+          <label for="programmeManual">Programme *</label>
+          <input id="programmeManual" maxlength="160" autocomplete="off" placeholder="Enter your programme name manually">
+          <button type="button" data-action="search-programme">Choose from local programme list</button>
+        </div>
+        <p id="profileFeedback" class="profile-feedback" role="alert"></p>
+        <div class="profile-form-actions"><button id="cancelProfile" type="button" hidden>Cancel</button><button class="primary" type="submit">Save profile</button></div>
+      </form>
+    </section>
+    <section id="profileCard" class="profile-card no-print" aria-labelledby="profileCardName" hidden>
+      <div class="profile-avatar" aria-hidden="true"><span id="profileInitials">ST</span></div>
+      <div class="profile-card-body">
+        <span class="profile-overline">Current local profile</span>
+        <h2 id="profileCardName"></h2>
+        <dl class="profile-details"><div><dt>Matric</dt><dd id="profileCardMatric"></dd></div><div><dt>Study level</dt><dd id="profileCardLevel"></dd></div><div><dt>Programme</dt><dd id="profileCardProgramme"></dd></div><div id="profileAdvisorItem"><dt>Academic advisor</dt><dd id="profileCardAdvisor"></dd></div></dl>
+      </div>
+      <div class="profile-card-actions"><button data-action="edit-profile">Edit profile</button><button data-action="switch-profile">Switch profile</button><button data-action="add-profile">Add profile</button><button data-action="delete-profile" class="danger">Delete profile</button></div>
+      <div id="profileSwitchPanel" class="profile-switch-panel" hidden><label for="profileSwitcher">Choose a local profile</label><select id="profileSwitcher"></select><button data-action="activate-profile" class="primary">Switch</button></div>
+    </section>
+    <p id="status" class="app-status no-print" role="status"></p>
+    <div id="calculatorApp" hidden>
+      <section class="dashboard" aria-label="Overall summary">
+        <article class="score-card"><div><span>Overall CGPA</span><strong id="cgpa">0.00</strong></div><small>Maximum 4.00</small></article>
+        <article class="metric-card"><span>Total credits</span><strong id="totalCredits">0</strong><small>Credit hours counted</small></article>
+        <article class="metric-card"><span>Grade points</span><strong id="totalPoints">0.00</strong><small>Across all semesters</small></article>
+        <article class="metric-card"><span>Semesters</span><strong id="semesterCount">1</strong><small>In this profile</small></article>
+      </section>
+      <section class="section-heading"><div><span class="eyebrow dark">ACADEMIC PLAN</span><h2>Your semesters</h2><p>Changes are saved automatically to this profile.</p></div><button id="addSemester" class="primary no-print">+ Add semester</button></section>
+      <div id="semesters"></div>
+      <section class="grade-panel"><div class="grade-intro"><span class="eyebrow dark">QUICK REFERENCE</span><h2>UTeM grade scale</h2><p>Grade points used in every calculation.</p></div><div id="gradeScale" class="grade-grid"></div></section>
+      <aside class="disclaimer"><strong>Important</strong><p>This calculator is an unofficial student-made tool and is not affiliated with Universiti Teknikal Malaysia Melaka (UTeM). Please refer to official academic records for final results.</p></aside>
+      <section class="app-actions no-print" aria-labelledby="localActionsTitle">
+        <div><span class="eyebrow dark">LOCAL TO THIS DEVICE</span><h2 id="localActionsTitle">Reports and data</h2><p>Profiles auto-save. Use these actions for a manual save or a local PDF report.</p></div>
+        <div class="app-action-buttons"><button data-action="save">Save data</button><button data-action="preview-report">Preview report</button><button data-action="print-report" class="primary">Print / Save as PDF</button><button data-action="clear" class="danger">Clear profile GPA data</button></div>
+        <p class="report-feedback" data-report-feedback role="status"></p>
+      </section>
+    </div>
+    <section id="reportPanel" class="report-panel" aria-label="Report preview" hidden>
+      <div class="report-panel-actions no-print"><button data-action="close-report">Close preview</button><button class="primary" data-action="print-report">Print / Save as PDF</button></div>
+      <div id="reportContent" class="report-paper"></div>
+    </section>
+  </main>
+  <!-- Local bundled scripts only, in dependency order: the Capacitor bridge,
+       the bundled native-plugin UMDs (filesystem + printer register their
+       native proxies on the bridge), the shared UMD globals, the local store,
+       and finally the renderer. script-src 'self' blocks inline/remote code. -->
+  <script src="capacitor.js"></script><script src="filesystem-plugin.js"></script><script src="printer-plugin.js"></script><script src="shared/gpaCore.js"></script><script src="shared/dataValidation.js"></script><script src="shared/identityText.js"></script><script src="shared/programmeCatalog.js"></script><script src="shared/utemProgramsData.js"></script><script src="shared/offlineProfiles.js"></script><script src="shared/report.js"></script><script src="androidStore.js"></script><script src="renderer.js"></script>
+</body></html>
