@@ -55,6 +55,39 @@ Thumbs.db
 Desktop.ini
 .vscode/
 .idea/
+**/.idea/
 *.swp
 *.swo
 *~
+
+# Android / Capacitor build artifacts (scoped to the offline-android tree so
+# the offline-windows/build source folder, which holds app icons, is kept)
+offline-android/local.properties
+offline-android/**/local.properties
+offline-android/.gradle/
+offline-android/**/.gradle/
+offline-android/.idea/
+offline-android/**/.idea/
+offline-android/android/build/
+offline-android/android/**/build/
+offline-android/android/app/build/
+offline-android/**/*.apk
+offline-android/**/*.aab
+offline-android/**/*.aar
+offline-android/**/*.ap_
+offline-android/**/*.dex
+offline-android/**/*.class
+offline-android/**/*.keystore
+offline-android/**/*.jks
+offline-android/**/*.iml
+offline-android/**/captures/
+offline-android/**/.externalNativeBuild/
+offline-android/**/.cxx/
+offline-android/**/*.hprof
+offline-android/node_modules/
+offline-android/**/node_modules/
+# Capacitor-copied web assets and generated native config
+offline-android/android/app/src/main/assets/public
+offline-android/android/app/src/main/assets/capacitor.config.json
+offline-android/android/app/src/main/assets/capacitor.plugins.json
+offline-android/android/app/src/main/res/xml/config.xml

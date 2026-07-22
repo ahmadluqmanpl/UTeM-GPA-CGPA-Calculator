@@ -14,6 +14,12 @@ Report previews are built locally from the active profile and its validated calc
 
 The searchable programme catalogue is bundled at build time from `shared/utemPrograms.json`. It is never fetched at runtime. Search queries, selected catalogue entries, and manually entered programmes stay on the user's computer and are not sent to a server. Manual programme values are stored only inside the same validated local profile file. Because programme and accreditation information can change after a release, users should verify important details against current official UTeM sources.
 
+### Offline Android version
+
+The Android app stores the same student-entered profile and calculator data as the Windows version, using the same shared validation and multi-profile model. Profiles are saved as a validated `calculator-data.json` file inside the app's private, sandboxed data directory on the device through the Capacitor Filesystem API (`Directory.Data`). This location is not world-readable and is removed when the app is uninstalled.
+
+The app has no external server, account, database, cloud sync, or analytics. It does not use `localStorage`, `sessionStorage`, cookies, or IndexedDB for profile data, and its Content Security Policy keeps `connect-src 'none'` so the WebView cannot upload entered values. Report previews are built locally from the active profile, and printing uses the native Android print dialog to produce a PDF on the device. The bundled programme catalogue is packaged as a local script asset and is never fetched at runtime. Anyone with access to the unlocked device and its app data may be able to read these local files; they are not encrypted.
+
 ### Online Cloudflare Worker version
 
 The online version stores nothing permanently. It has no login, database, D1, KV, R2, Durable Objects, external storage, cookies, `localStorage`, `sessionStorage`, or IndexedDB. Entries exist only in the page's JavaScript memory. Closing or refreshing the page destroys that state.

@@ -1,6 +1,6 @@
 # Unofficial UTeM GPA/CGPA Calculator
 
-A beginner-friendly GPA and CGPA calculator for UTeM students, available as an offline Windows app and a session-only web app.
+A beginner-friendly GPA and CGPA calculator for UTeM students, available as an offline Windows app, a fully offline Android app, and a session-only web app.
 
 > This calculator is an unofficial student-made tool and is not affiliated with Universiti Teknikal Malaysia Melaka (UTeM). Always verify results against official academic records and current university policies.
 
@@ -8,9 +8,9 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 <div align="center">
 
-[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe)
+[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0-setup.exe)
 
-[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest)
+[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0.apk)
 
 [![Open Live Web App](https://img.shields.io/badge/Open-Live%20Web%20App-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/)
 
@@ -27,7 +27,8 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 - Approved UTeM grade scale with safe handling of empty or incomplete subjects
 - Responsive, lightweight interface for laptops and phones
 - Searchable bundled UTeM programme catalogue with manual-entry fallback
-- Multiple local profiles in the offline Windows app
+- Multiple local profiles in the offline Windows and Android apps
+- Fully offline Android version with local profiles, offline programme search, and native Print / Save as PDF
 - Uppercase student names, matric numbers, and academic advisor names in profiles and reports
 - Local report preview and Print / Save as PDF workflow
 - Automated calculation, validation, persistence, security, and Worker tests
@@ -37,6 +38,7 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 | Version | Purpose | Data handling |
 |---|---|---|
 | Offline Windows | Electron desktop app that works without internet | Saves validated profiles and calculator data locally on the user's computer |
+| Offline Android | Capacitor Android app that works fully offline | Saves validated profiles and calculator data locally in the app-private device sandbox |
 | [Online Worker](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/) | Cloudflare-hosted calculator for temporary use | Keeps entered data only in page memory and clears it on refresh or close |
 
 ## Privacy summary
@@ -79,7 +81,7 @@ pnpm run build:installer
 The recommended shareable artifact is written to:
 
 ```text
-offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe
+offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0-setup.exe
 ```
 
 The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. The NSIS installer is the sole supported Windows artifact; the optional portable build has been retired. See [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.

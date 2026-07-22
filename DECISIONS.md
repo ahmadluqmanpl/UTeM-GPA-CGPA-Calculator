@@ -16,5 +16,6 @@ This file records stable architectural choices. Detailed implementation rules be
 | Use JSON for offline backup/import | It is transparent and beginner-friendly, provided files are size-limited and schema-validated before use. |
 | Bundle logo, CSS, and JavaScript locally | Keeps Electron offline, avoids third-party runtime dependencies, and supports a strict Content Security Policy. |
 | Recommend the NSIS installer for Windows sharing | An installed Electron app behaves like a normal Windows application and usually starts faster than the self-extracting portable build. |
+| Use Capacitor for the offline Android version | Maximizes reuse of the shared calculations, validation, profile model, catalogue, report builder, and responsive design as a local WebView, preserving the shared architecture and local-only privacy model while adding a native mobile experience. |
 
 If a decision changes, record the replacement and update the affected brief, security, deployment, and README sections.

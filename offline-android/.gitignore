@@ -1,0 +1,57 @@
+# offline-android wrapper: dependencies, IDE, and Android/Capacitor artifacts.
+# Scoped to this directory; mirrors and reinforces the root .gitignore rules.
+
+# pnpm dependencies (nested node_modules anywhere below this folder)
+node_modules/
+**/node_modules/
+
+# Local machine SDK config (machine-specific; never commit)
+local.properties
+**/local.properties
+
+# Gradle / Android Studio build output
+.gradle/
+**/.gradle/
+build/
+**/build/
+app/build/
+android/build/
+android/**/build/
+
+# Android Studio / IntelliJ project files
+.idea/
+**/.idea/
+*.iml
+**/*.iml
+captures/
+**/captures/
+
+# Compiled / packaged Android artifacts
+*.apk
+*.aab
+*.aar
+*.ap_
+*.dex
+*.class
+
+# Signing material (never commit)
+*.keystore
+*.jks
+
+# Native build caches
+.externalNativeBuild/
+**/.externalNativeBuild/
+.cxx/
+**/.cxx/
+
+# Profiling snapshots
+*.hprof
+
+# Capacitor-copied web assets and generated native config
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+
+# Logs
+*.log
