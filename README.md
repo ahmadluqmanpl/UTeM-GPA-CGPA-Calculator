@@ -89,6 +89,24 @@ offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.2-setup.exe
 
 The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. The NSIS installer is the sole supported Windows artifact; the optional portable build has been retired. See [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.
 
+## Sync offline Android app
+
+```powershell
+cd offline-android
+pnpm install
+pnpm run build
+```
+
+The `build` script automatically copies the latest shared calculations, UI assets, and programme catalogue, then synchronizes them into the native Android project via Capacitor.
+
+## Build Android APK
+
+1. Open the `offline-android/android` directory in Android Studio.
+2. Allow Gradle to sync.
+3. Select **Build > Build Bundle(s) / APK(s) > Build APK(s)** from the top menu.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Android release checks and signing details.
+
 ## Run online Worker locally
 
 ```powershell
@@ -115,6 +133,7 @@ The Worker serves the calculator and security headers only. It has no D1, KV, R2
 ```text
 shared/          Shared calculations, validation, report tools, UI, and programme data
 offline-windows/ Secure local Electron application and Windows packaging
+offline-android/ Fully offline Capacitor mobile application
 online-worker/   Session-only website and Cloudflare Worker
 ```
 
