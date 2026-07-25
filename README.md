@@ -8,9 +8,9 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 <div align="center">
 
-[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0-setup.exe)
+[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1-setup.exe)
 
-[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0.apk)
+[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1.apk)
 
 [![Open Live Web App](https://img.shields.io/badge/Open-Live%20Web%20App-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/)
 
@@ -81,7 +81,7 @@ pnpm run build:installer
 The recommended shareable artifact is written to:
 
 ```text
-offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.0-setup.exe
+offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1-setup.exe
 ```
 
 The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. The NSIS installer is the sole supported Windows artifact; the optional portable build has been retired. See [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.

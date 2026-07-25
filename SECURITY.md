@@ -18,7 +18,9 @@ The searchable programme catalogue is bundled at build time from `shared/utemPro
 
 The Android app stores the same student-entered profile and calculator data as the Windows version, using the same shared validation and multi-profile model. Profiles are saved as a validated `calculator-data.json` file inside the app's private, sandboxed data directory on the device through the Capacitor Filesystem API (`Directory.Data`). This location is not world-readable and is removed when the app is uninstalled.
 
-The app has no external server, account, database, cloud sync, or analytics. It does not use `localStorage`, `sessionStorage`, cookies, or IndexedDB for profile data, and its Content Security Policy keeps `connect-src 'none'` so the WebView cannot upload entered values. Report previews are built locally from the active profile, and printing uses the native Android print dialog to produce a PDF on the device. The bundled programme catalogue is packaged as a local script asset and is never fetched at runtime. Anyone with access to the unlocked device and its app data may be able to read these local files; they are not encrypted.
+Android Auto Backup and related cloud/device-transfer backup extraction are disabled (`allowBackup="false"`, with exclude rules in `data_extraction_rules` / `fullBackupContent`) so profile JSON is not copied off-device by the platform backup system. The FileProvider configuration exposes only the app cache directory—not external storage—and the report print path uses an in-memory WebView with the system print dialog.
+
+The app has no external server, account, database, cloud sync, or analytics. It does not use `localStorage`, `sessionStorage`, cookies, or IndexedDB for profile data, and its Content Security Policy keeps `connect-src 'none'` so the WebView cannot upload entered values. Capacitor still declares the `INTERNET` permission because it loads the local UI origin as `https://localhost` through an in-process WebView server; that is not used for remote calculator traffic. Report previews are built locally from the active profile, and printing uses the native Android print dialog to produce a PDF on the device. The bundled programme catalogue is packaged as a local script asset and is never fetched at runtime. Anyone with access to the unlocked device and its app data may be able to read these local files; they are not encrypted.
 
 ### Online Cloudflare Worker version
 
@@ -54,7 +56,7 @@ Imported JSON is parsed only as data, checked for its expected shape and limits,
 
 Every Worker response includes:
 
-- `Content-Security-Policy` restricting scripts, styles, images, fonts, connections, frames, base URLs, and form actions;
+- `Content-Security-Policy` aligned with the page meta policy (`script-src 'self'`, `style-src 'self'`, `connect-src 'none'`, `img-src 'self' data:`) plus `frame-ancestors 'none'`, `base-uri 'self'`, and `form-action 'self'`;
 - `X-Frame-Options: DENY` to prevent framing;
 - `X-Content-Type-Options: nosniff`;
 - `Referrer-Policy: no-referrer`;
@@ -72,6 +74,8 @@ External navigation, new windows, popups, and webviews are blocked. All browser 
 The offline Windows app was upgraded from Electron 37.10.3 to **Electron 39.8.5** on **14 July 2026**. After the upgrade, `pnpm --dir offline-windows audit` reports no known vulnerabilities. The root and online Worker scopes also report no known pnpm advisories.
 
 Electron 39 compatibility was verified with the full automated suite, live application startup, profile creation and restore, the complete local programme selector, GPA/CGPA calculations, filesystem persistence, report preview, the Print IPC path, responsive renderer checks, and NSIS installer packaging. The existing isolation, navigation, permission, CSP, and narrow-preload controls remain enabled.
+
+For v1.1.1, pnpm `overrides` were added to each package's `pnpm-workspace.yaml` to remediate advisories in **build-time-only** dev tooling (`electron-builder`, `wrangler`/`miniflare`, and `@capacitor/cli`). The overrides raise `fast-uri` to 4.1.1, `brace-expansion` to 5.0.8, `tar` to 7.5.21, and `sharp` to 0.35.x. These packages are used only while packaging and are **not** bundled into the Windows installer, the Android APK web assets, or the deployed Worker, so runtime calculator assets are unchanged. After the overrides, every scope (`pnpm audit`, `pnpm --dir offline-windows audit`, `pnpm --dir online-worker audit`, and `pnpm --dir offline-android audit`) reports no known vulnerabilities.
 
 ## Unofficial status
 

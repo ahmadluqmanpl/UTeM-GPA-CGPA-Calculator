@@ -241,18 +241,20 @@ function createSubjectsTable(subjects) {
   return table;
 }
 
-function createSemesterCard(semester) {
+// index is the semester's position in the semesters array; the title
+// is read-only and derived strictly from it so names can never duplicate.
+function createSemesterCard(semester, index) {
   const result = core.semesterResult(semester.subjects);
   const card = element("article", "semester");
   card.dataset.semester = semester.id;
   const header = element("header", "semester-header");
-  const title = createTextInput("semester-name", "Semester name", semester.name, limits.maxSemesterNameLength);
-  title.className = "semester-title";
+  // Read-only positional title instead of an editable input.
+  const title = element("h3", "semester-title", `Semester ${index + 1}`);
   const gpa = element("div", "semester-gpa");
   gpa.append(element("span", "", "Semester GPA"), element("strong", "", format(result.gpa)));
   const remove = element("button", "remove", "Remove");
   remove.dataset.action = "remove-semester";
-  remove.setAttribute("aria-label", `Remove ${semester.name}`);
+  remove.setAttribute("aria-label", `Remove Semester ${index + 1}`);
   header.append(title, gpa, remove);
 
   const summary = element("div", "semester-summary");
@@ -306,10 +308,6 @@ document.addEventListener("input", event => {
   if (!field) return;
   const semester = findSemester(event.target);
   if (!semester) return;
-  if (field === "semester-name") {
-    semester.name = event.target.value.slice(0, limits.maxSemesterNameLength);
-    return;
-  }
   const subjectId = event.target.closest("[data-subject]").dataset.subject;
   const subject = semester.subjects.find(item => item.id === subjectId);
   if (field === "name") {
@@ -348,6 +346,12 @@ document.addEventListener("click", event => {
   }
   if (action === "remove-semester") {
     if (state.semesters.length === 1) return status("Keep at least one semester.");
+    const semesterIndex = state.semesters.findIndex(item => item.id === semester.id);
+    // Deleting a middle/early semester renumbers every semester after it.
+    if (semesterIndex < state.semesters.length - 1) {
+      const message = `Remove Semester ${semesterIndex + 1}? The semesters after it will be renumbered.`;
+      if (!confirm(message)) return;
+    }
     state.semesters = state.semesters.filter(item => item.id !== semester.id);
   }
   render();

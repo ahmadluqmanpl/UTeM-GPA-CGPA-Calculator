@@ -23,6 +23,10 @@ coverage/
 *.zip
 *.7z
 *.blockmap
+# Android packages can be produced anywhere a signing/export step drops them;
+# the scoped offline-android/** rules below cover the build tree, these catch strays.
+*.apk
+*.aab
 
 # Logs and temporary files
 *.log

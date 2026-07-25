@@ -67,7 +67,7 @@ pnpm run build:installer
 
 `pnpm run build` is an alias for the same installer-first build. The prebuild script refreshes shared calculations, profile validation, the local programme catalogue, report tools, and CSS. Electron Builder writes the installer below `offline-windows/dist/`:
 
-- `Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-setup.exe`
+- `Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1-setup.exe`
 
 The per-user NSIS installer has a selectable installation directory, Desktop and Start Menu shortcut support, and normal uninstall support. Electron Builder uses `offline-windows/build/icon.ico` for the installer, installed executable, shortcuts, and Windows taskbar identity. It is the recommended sharing artifact because an installed app usually starts faster than the self-extracting portable build. The explicit packaging list includes the renderer, local logo, copied programme data and shared files, preload, local data store, and main-process code while excluding source tests.
 
@@ -79,7 +79,7 @@ To create the portable executable for a user who cannot install applications:
 pnpm run build:portable
 ```
 
-The expected portable artifact is `offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.0.1-portable.exe`. It is optional rather than the main sharing method. The existing `offline-windows/build/icon.ico` is also used when this optional artifact is rebuilt.
+The portable build path remains available for exceptional cases, but the NSIS installer is the sole recommended Windows release artifact. The existing `offline-windows/build/icon.ico` is used for the installer, executable, and shortcuts.
 
 ### Windows release checks
 

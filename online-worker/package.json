@@ -1,6 +1,6 @@
 {
   "name": "utem-gpa-calculator-online",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Session-only online Unofficial UTeM GPA and CGPA Calculator",
   "author": "Ahmad Luqman",
   "license": "MIT",
@@ -8,6 +8,8 @@
   "type": "module",
   "scripts": {
     "copy-shared": "node scripts/copy-shared.js",
+    "prebuild": "node scripts/copy-shared.js",
+    "build": "node scripts/copy-shared.js",
     "predev": "node scripts/copy-shared.js",
     "dev": "wrangler dev",
     "predeploy": "node scripts/copy-shared.js",

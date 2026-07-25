@@ -193,11 +193,18 @@ button {
 }
 
 button:hover { border-color: #b8c3d5; background: #f8faff; transform: translateY(-1px); }
-button:active { transform: translateY(0); }
+button:active { transform: translateY(0) scale(.98); box-shadow: inset 0 1px 3px rgba(31, 46, 82, .12); }
 button.primary { color: white; border-color: var(--utem-blue); background: var(--utem-blue); box-shadow: 0 6px 16px rgba(36, 63, 145, .18); }
 button.primary:hover { border-color: #1c347c; background: #1c347c; }
+button.primary:active { box-shadow: 0 2px 6px rgba(36, 63, 145, .2), inset 0 1px 3px rgba(0, 0, 0, .18); }
 button.danger, button.remove { color: var(--danger); }
 button:focus-visible, input:focus, select:focus { outline: 3px solid rgba(63, 103, 203, .24); outline-offset: 2px; border-color: #6f8cd2; }
+
+/* Smooth, lightweight focus transition on editable fields (complements the
+   button transition above). Box-shadow fades in as a soft focus ring. */
+input, select {
+  transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
 
 .semester {
   margin-bottom: 20px;
@@ -216,18 +223,45 @@ button:focus-visible, input:focus, select:focus { outline: 3px solid rgba(63, 10
   gap: 14px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(90deg, #f7f9fe, #fbfcff);
+  cursor: pointer;
+}
+.semester-header input, .semester-header select, .semester-header button { cursor: auto; }
+.semester-header .semester-toggle, .semester-header .remove { cursor: pointer; }
+
+/* Collapse toggle button. Rotates via the .collapsed state on the card. */
+.semester-toggle {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform .22s ease;
 }
 
+/* Collapsible body: wraps the subjects table + summary + actions. The
+   grid-template-rows 1fr → 0fr trick gives a smooth height transition without
+   JavaScript animation libraries. */
+.semester-body {
+  max-height: 2200px;
+  overflow: hidden;
+  transition: max-height .28s ease, opacity .22s ease;
+}
+.semester.collapsed .semester-body { max-height: 0; opacity: 0; }
+.semester.collapsed .semester-header { border-bottom-color: transparent; }
+.semester.collapsed .semester-toggle { transform: rotate(-90deg); }
+
+/* Read-only positional semester title (an <h3>, not an editable input). */
 .semester-title {
+  margin: 0;
   width: min(370px, 52%);
   padding: 8px 10px;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
   color: var(--ink);
   font: inherit;
   font-size: 20px;
   font-weight: 750;
+  cursor: default;
 }
 
 .semester-title:hover { border-color: var(--line); background: white; }
@@ -355,4 +389,34 @@ button:focus-visible, input:focus, select:focus { outline: 3px solid rgba(63, 10
   .grade-item:nth-child(4n) { border-right: 1px solid var(--line); }
   .grade-item:nth-child(3n) { border-right: 0; }
   .disclaimer { flex-direction: column; gap: 5px; }
+}
+
+/* Gentle fade-ins for panels, dropdowns, and lists as they are revealed.
+   These run on the shared design and stay purely CSS (no JS animation
+   libraries). Because the app toggles the `hidden` attribute (display:none),
+   the animation replays each time a section becomes visible. */
+@keyframes app-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-setup:not([hidden]),
+.profile-card:not([hidden]),
+.report-panel:not([hidden]),
+.profile-switch-panel:not([hidden]),
+.programme-results:not([hidden]),
+.selected-programme:not([hidden]),
+.semester:not([hidden]),
+.grade-item:not([hidden]) {
+  animation: app-fade-in .22s ease-out;
+}
+
+/* Respect users who prefer less motion: drop transitions and fade-ins. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

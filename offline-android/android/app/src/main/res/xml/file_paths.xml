@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- FileProvider roots used only when a content URI is granted to another app.
+     The GPA report print path (Printer.printHtml) uses an in-memory WebView and
+     PrintManager, so it does not need external storage. Keep only the app cache
+     root so any future print-temp files under getCacheDir() can be shared safely.
+     Do not expose external storage. -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="." />
-    <cache-path name="my_cache_images" path="." />
+    <cache-path name="print_cache" path="." />
 </paths>

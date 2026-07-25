@@ -1,7 +1,9 @@
 // The Worker only serves static calculator files. It has no storage bindings
 // and rejects non-read requests so entered student data cannot be uploaded.
 const SECURITY_HEADERS = Object.freeze({
-  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
+  // Match the page meta CSP (connect-src 'none', no style unsafe-inline) and keep
+  // frame/base/form hardening for every Worker response, including non-HTML assets.
+  "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'",
   "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
   "Referrer-Policy": "no-referrer",

@@ -1,10 +1,11 @@
 # Task Log
 
-Last updated: 2026-07-21
+Last updated: 2026-07-25
 
 ## Current task
 
-The v1.1.0 release is prepared. The new offline Android (Capacitor) platform is feature-complete and synced, the version is bumped to 1.1.0 across all packages, and the README now offers the Android APK download alongside the Windows installer and live web app.
+v1.1.1 release finalized and documented. Windows installer built, Android assets synced, Worker assets refreshed, all 36 tests and all pnpm audits passing. Remaining manual steps for the maintainer: sign the Android APK in Android Studio, create and push the Git tag, publish the GitHub Release, and deploy the Cloudflare Worker.
+
 ## Completed
 
 - Created shared GPA/CGPA calculation logic and automated tests.
@@ -63,6 +64,15 @@ The v1.1.0 release is prepared. The new offline Android (Capacitor) platform is 
 - Added collapsible semester cards: each card now has a `.semester-toggle` button plus a clickable header that toggles a `.collapsed` class; `shared/ui.css` animates `.semester-body` (max-height/opacity) so subject rows hide smoothly while the Semester GPA header stays visible. Kept DOM-property-only rendering (no innerHTML/outerHTML). All 34 root tests pass.
 - Refined semester UX in `offline-android/src/renderer.js`: made semester titles read-only positional headings (`Semester N` from the array index, no editable input) to prevent duplicate names; added a `window.confirm` renumber warning when removing a non-last semester; and preserved each card's `.collapsed` state across re-renders by snapshotting collapsed IDs before render and reapplying them (plus toggle aria/glyph) after. Updated `shared/ui.css` `.semester-title` for the read-only `<h3>`. All 34 root tests pass.
 - Prepared the v1.1.0 release for the new Android platform: bumped the version to 1.1.0 in the root, offline-windows, online-worker, and offline-android packages; added a matching Android APK download badge to the README Download section; and confirmed the Capacitor Android app syncs cleanly with the automated suite passing.
+- Hardened Android privacy defaults: `allowBackup="false"` with `dataExtractionRules` and `fullBackupContent` excluding app data; narrowed FileProvider to app `cache-path` only (removed broad `external-path`); documented why `INTERNET` must remain for Capacitor's local HTTPS WebView origin.
+- Aligned the Cloudflare Worker CSP with the page meta policy (`connect-src 'none'`, no `style-src 'unsafe-inline'`).
+- Extended `shared/securitySource.test.js` to cover Android first-party renderer/store sources, Android HTML CSP, backup/FileProvider manifest rules, and Worker CSP alignment.
+- Prepared v1.1.1: version `1.1.1` across root/Windows/Worker/Android packages; Android `versionCode 2` / `versionName 1.1.1`; README download links; CHANGELOG and release notes; DEPLOYMENT installer path examples.
+- Ported Android's read-only positional `<h3>` semester titles and non-last-semester deletion confirmation to `offline-windows/src/renderer/app.js` and `online-worker/public/app.js`, removing the editable semester-name inputs while keeping DOM-property-only rendering (no innerHTML).
+- Remediated build-time dev-dependency advisories via pnpm `overrides` in each package's `pnpm-workspace.yaml` (`fast-uri` 4.1.1, `brace-expansion` 5.0.8, `tar` 7.5.21, `sharp` 0.35.x); all four `pnpm audit` scopes now report no known vulnerabilities and all builds (Windows installer, Android `cap sync`, Worker assets) still succeed.
+- Tightened root `.gitignore` to globally exclude stray Android `*.apk`/`*.aab` packages, confirming generated Windows, Android, Worker, and OS-cache artifacts stay out of version control while source folders (e.g. `offline-windows/build/` icons) remain tracked.
+- Rebuilt the v1.1.1 NSIS installer, synced Android web assets, refreshed Worker assets, and verified the full 36-test suite passes after the dependency overrides.
+- Finalized the v1.1.1 documentation set: rewrote `RELEASE_NOTES_v1.1.1.md`, enriched the `CHANGELOG.md` [1.1.1] entry, and documented the dependency-override resolution in `SECURITY.md`.
 
 ## Pending
 

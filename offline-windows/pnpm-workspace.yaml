@@ -5,3 +5,10 @@ packages:
 allowBuilds:
   electron: true
   electron-winstaller: true
+
+# Security remediation for build-time (electron-builder) transitive advisories.
+overrides:
+  fast-uri: ">=3.1.4"
+  brace-expansion: ">=5.0.8"
+  tar: ">=7.5.21"
+  sharp: ">=0.35.0"
