@@ -1,10 +1,10 @@
 # Task Log
 
-Last updated: 2026-07-25
+Last updated: 2026-07-26
 
 ## Current task
 
-v1.1.1 release finalized and documented. Windows installer built, Android assets synced, Worker assets refreshed, all 36 tests and all pnpm audits passing. Remaining manual steps for the maintainer: sign the Android APK in Android Studio, create and push the Git tag, publish the GitHub Release, and deploy the Cloudflare Worker.
+v1.1.2 release finalized. UI feature parity achieved across all platforms (collapsible semesters, cumulative CGPA tracking, auto-uppercase). Security audit passed with new Electron navigation guards and dependency patches. Remaining manual steps: compile Android APK, create Git tag, and publish the GitHub Release.
 
 ## Completed
 
@@ -73,6 +73,11 @@ v1.1.1 release finalized and documented. Windows installer built, Android assets
 - Tightened root `.gitignore` to globally exclude stray Android `*.apk`/`*.aab` packages, confirming generated Windows, Android, Worker, and OS-cache artifacts stay out of version control while source folders (e.g. `offline-windows/build/` icons) remain tracked.
 - Rebuilt the v1.1.1 NSIS installer, synced Android web assets, refreshed Worker assets, and verified the full 36-test suite passes after the dependency overrides.
 - Finalized the v1.1.1 documentation set: rewrote `RELEASE_NOTES_v1.1.1.md`, enriched the `CHANGELOG.md` [1.1.1] entry, and documented the dependency-override resolution in `SECURITY.md`.
+- Added per-semester cumulative CGPA tracking alongside the existing Semester GPA badges.
+- Implemented auto-uppercase formatting for subject codes and names to maintain academic consistency.
+- Ported collapsible semester card UI from Android to Windows and Web, positioning the toggle button on the far left of the semester header for a balanced layout.
+- Hardened Electron security by adding a `will-navigate` guard to block unauthorized external navigation.
+- Confirmed via the v1.1.2 pre-release audit that all four `pnpm audit` scopes remain free of known vulnerabilities (the v1.1.1 `pnpm.overrides` remediation still holds), so no new dependency patches were required.
 
 ## Pending
 

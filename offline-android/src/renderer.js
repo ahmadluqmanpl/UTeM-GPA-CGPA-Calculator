@@ -394,24 +394,32 @@
 
   // index is the semester's position in the active profile's array; the title
   // is read-only and derived strictly from it so names can never duplicate.
-  function createSemesterCard(semester, index) {
+  function createSemesterCard(semester, index, allSemesters) {
     const result = core.semesterResult(semester.subjects);
     const card = element("article", "semester");
     card.dataset.semester = semester.id;
     const header = element("header", "semester-header");
     // Read-only positional title instead of an editable input.
     const title = element("h3", "semester-title", `Semester ${index + 1}`);
-    const gpa = element("div", "semester-gpa");
-    gpa.append(element("span", "", "Semester GPA"), element("strong", "", format(result.gpa)));
-    // Collapse toggle (mobile-friendly); the header click handler reads this.
+    // Collapse toggle sits on the far left, directly beside the semester title.
+    // The header click handler reads this button.
     const toggle = element("button", "semester-toggle no-print", "▾");
     toggle.dataset.action = "toggle-semester";
     toggle.setAttribute("aria-label", `Collapse Semester ${index + 1}`);
     toggle.setAttribute("aria-expanded", "true");
+    // Group the toggle and title on the left so they stay aligned together.
+    const titleGroup = element("div", "semester-title-group");
+    titleGroup.append(toggle, title);
+    const gpa = element("div", "semester-gpa");
+    gpa.append(element("span", "", "Semester GPA"), element("strong", "", format(result.gpa)));
+    // Cumulative CGPA up to and including this semester.
+    const cumulativeCgpa = core.overallResult((allSemesters || [semester]).slice(0, index + 1)).cgpa;
+    const cgpa = element("div", "semester-gpa semester-cgpa");
+    cgpa.append(element("span", "", "Semester CGPA"), element("strong", "", format(cumulativeCgpa)));
     const remove = element("button", "remove no-print", "Remove");
     remove.dataset.action = "remove-semester";
     remove.setAttribute("aria-label", `Remove Semester ${index + 1}`);
-    header.append(title, gpa, toggle, remove);
+    header.append(titleGroup, gpa, cgpa, remove);
     // Body wraps everything that collapses; the GPA header stays visible.
     const body = element("div", "semester-body");
     const summary = element("div", "semester-summary");
@@ -444,7 +452,7 @@
     if (!profile) return;
     const collapsed = collapsedBefore || captureCollapsedSemesters();
     const container = document.querySelector("#semesters");
-    container.replaceChildren(...profile.semesters.map((semester, index) => createSemesterCard(semester, index)));
+    container.replaceChildren(...profile.semesters.map((semester, index) => createSemesterCard(semester, index, profile.semesters)));
     // Reapply the collapsed state to the freshly rendered cards.
     for (const card of container.querySelectorAll("[data-semester]")) {
       if (!collapsed.has(card.dataset.semester)) continue;
@@ -726,7 +734,10 @@
     const subject = semester.subjects.find(item => item.id === subjectId);
     if (!subject) return;
     if (field === "name") {
-      subject.name = event.target.value.slice(0, limits.maxSubjectNameLength);
+      // Subject codes/names are uppercased as typed (cursor-preserving) and the
+      // uppercase string is what gets saved/exported.
+      const uppercased = identityText.uppercaseIdentityInput(event.target);
+      subject.name = uppercased.slice(0, limits.maxSubjectNameLength);
       scheduleAutoSave();
       return;
     }

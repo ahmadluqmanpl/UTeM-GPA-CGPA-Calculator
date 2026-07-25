@@ -236,19 +236,35 @@ function createSubjectsTable(subjects) {
 
 // index is the semester's position in the active profile's array; the title
 // is read-only and derived strictly from it so names can never duplicate.
-function createSemesterCard(semester, index) {
+// allSemesters is the full array from .map(), used for the cumulative CGPA.
+function createSemesterCard(semester, index, allSemesters) {
   const result = core.semesterResult(semester.subjects);
   const card = element("article", "semester");
   card.dataset.semester = semester.id;
   const header = element("header", "semester-header");
   // Read-only positional title instead of an editable input.
   const title = element("h3", "semester-title", `Semester ${index + 1}`);
+  // Collapse toggle sits on the far left, directly beside the semester title.
+  // The .collapsed class on the card drives the CSS transition.
+  const toggle = element("button", "semester-toggle no-print", "▾");
+  toggle.dataset.action = "toggle-semester";
+  toggle.setAttribute("aria-label", `Collapse Semester ${index + 1}`);
+  toggle.setAttribute("aria-expanded", "true");
+  // Group the toggle and title on the left so they stay aligned together.
+  const titleGroup = element("div", "semester-title-group");
+  titleGroup.append(toggle, title);
   const gpa = element("div", "semester-gpa");
   gpa.append(element("span", "", "Semester GPA"), element("strong", "", format(result.gpa)));
+  // Cumulative CGPA up to and including this semester.
+  const cumulativeCgpa = core.overallResult((allSemesters || [semester]).slice(0, index + 1)).cgpa;
+  const cgpa = element("div", "semester-gpa semester-cgpa");
+  cgpa.append(element("span", "", "Semester CGPA"), element("strong", "", format(cumulativeCgpa)));
   const remove = element("button", "remove no-print", "Remove");
   remove.dataset.action = "remove-semester";
   remove.setAttribute("aria-label", `Remove Semester ${index + 1}`);
-  header.append(title, gpa, remove);
+  header.append(titleGroup, gpa, cgpa, remove);
+  // Body wraps everything that collapses; the GPA header stays visible.
+  const body = element("div", "semester-body");
   const summary = element("div", "semester-summary");
   const credits = element("span", "", "Credits ");
   credits.append(element("strong", "", String(result.totalCredits)));
@@ -259,19 +275,55 @@ function createSemesterCard(semester, index) {
   const addSubject = element("button", "", "+ Add subject");
   addSubject.dataset.action = "add-subject";
   actions.append(addSubject);
-  card.append(header, createSubjectsTable(semester.subjects), summary, actions);
+  body.append(createSubjectsTable(semester.subjects), summary, actions);
+  card.append(header, body);
   return card;
 }
 
-function renderCalculator() {
+// Snapshot which semester cards are collapsed so a re-render (e.g. after
+// adding a subject) restores their closed state instead of expanding all.
+function captureCollapsedSemesters() {
+  const collapsed = new Set();
+  for (const card of document.querySelectorAll("#semesters [data-semester].collapsed")) {
+    collapsed.add(card.dataset.semester);
+  }
+  return collapsed;
+}
+
+function renderCalculator(collapsedBefore = null) {
   const profile = activeProfile();
   if (!profile) return;
-  document.querySelector("#semesters").replaceChildren(...profile.semesters.map(createSemesterCard));
+  const collapsed = collapsedBefore || captureCollapsedSemesters();
+  const container = document.querySelector("#semesters");
+  container.replaceChildren(...profile.semesters.map(createSemesterCard));
+  // Reapply the collapsed state to the freshly rendered cards.
+  for (const card of container.querySelectorAll("[data-semester]")) {
+    if (!collapsed.has(card.dataset.semester)) continue;
+    card.classList.add("collapsed");
+    const toggle = card.querySelector(".semester-toggle");
+    if (toggle) {
+      toggle.setAttribute("aria-expanded", "false");
+      toggle.textContent = "▸";
+      toggle.setAttribute("aria-label", toggle.getAttribute("aria-label").replace("Collapse", "Expand"));
+    }
+  }
   const overall = core.overallResult(profile.semesters);
   document.querySelector("#cgpa").textContent = format(overall.cgpa);
   document.querySelector("#totalCredits").textContent = String(overall.totalCredits);
   document.querySelector("#totalPoints").textContent = format(overall.totalGradePoints);
   document.querySelector("#semesterCount").textContent = String(profile.semesters.length);
+}
+
+// Collapse/expand a semester card. The .collapsed class drives the CSS
+// transition that hides the subject body while the GPA header stays visible.
+function toggleSemesterCard(card, toggleButton) {
+  if (!card) return;
+  const collapsed = card.classList.toggle("collapsed");
+  if (toggleButton) {
+    toggleButton.setAttribute("aria-expanded", String(!collapsed));
+    toggleButton.textContent = collapsed ? "▸" : "▾";
+    toggleButton.setAttribute("aria-label", collapsed ? "Expand semester" : "Collapse semester");
+  }
 }
 
 function initials(name) {
@@ -540,7 +592,10 @@ document.addEventListener("input", event => {
   const subjectId = event.target.closest("[data-subject]").dataset.subject;
   const subject = semester.subjects.find(item => item.id === subjectId);
   if (field === "name") {
-    subject.name = event.target.value.slice(0, limits.maxSubjectNameLength);
+    // Subject codes/names are uppercased as typed (cursor-preserving) and the
+    // uppercase string is what gets saved/exported.
+    const uppercased = identityText.uppercaseIdentityInput(event.target);
+    subject.name = uppercased.slice(0, limits.maxSubjectNameLength);
     scheduleAutoSave();
     return;
   }
@@ -588,9 +643,14 @@ async function deleteActiveProfile(deleteButton) {
 }
 
 document.addEventListener("click", async event => {
-  const action = event.target.closest("[data-action]")?.dataset.action;
+  const actionEl = event.target.closest("[data-action]");
+  const action = actionEl?.dataset.action;
   if (!action) return;
   try {
+    if (action === "toggle-semester") {
+      toggleSemesterCard(actionEl.closest("[data-semester]"), actionEl);
+      return;
+    }
     if (action === "manual-programme") return showManualProgramme();
     if (action === "search-programme") return showProgrammeSearch();
     if (action === "choose-programme") {
@@ -712,6 +772,16 @@ document.querySelector("#addSemester").addEventListener("click", () => {
   profile.semesters.push(newSemester(profile.semesters.length + 1));
   renderCalculator();
   scheduleAutoSave();
+});
+
+// Clicking the semester header background (not an input/select/button, which
+// handle their own actions) also collapses/expands that semester.
+document.querySelector("#semesters").addEventListener("click", event => {
+  const header = event.target.closest(".semester-header");
+  if (!header) return;
+  if (event.target.closest("input, select, button, a, textarea, label")) return;
+  const card = header.closest("[data-semester]");
+  toggleSemesterCard(card, card ? card.querySelector(".semester-toggle") : null);
 });
 
 const gradeScale = document.querySelector("#gradeScale");

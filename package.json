@@ -1,6 +1,6 @@
 {
   "name": "utem-gpa-cgpa-calculator",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "private": true,
   "description": "Unofficial UTeM GPA/CGPA Calculator for Windows and Cloudflare Workers",
   "author": "Ahmad Luqman",

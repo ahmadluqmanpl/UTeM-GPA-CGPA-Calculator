@@ -67,7 +67,7 @@ Every Worker response includes:
 
 The desktop renderer uses `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`, and `webSecurity: true`. A narrow, frozen preload API exposes only save, load, clear, import, export, bundled-programme listing, and print requests. The main process accepts IPC only from the local packaged calculator page.
 
-External navigation, new windows, popups, and webviews are blocked. All browser permission requests are denied. The HTML Content Security Policy also blocks network connections, and the app loads no remote content.
+External navigation, new windows, popups, and webviews are blocked. A strict `will-navigate` event listener on the `webContents` prevents the app from routing to any external URLs, ensuring it remains strictly localized. All browser permission requests are denied. The HTML Content Security Policy also blocks network connections, and the app loads no remote content.
 
 ## Dependency status
 
@@ -76,6 +76,8 @@ The offline Windows app was upgraded from Electron 37.10.3 to **Electron 39.8.5*
 Electron 39 compatibility was verified with the full automated suite, live application startup, profile creation and restore, the complete local programme selector, GPA/CGPA calculations, filesystem persistence, report preview, the Print IPC path, responsive renderer checks, and NSIS installer packaging. The existing isolation, navigation, permission, CSP, and narrow-preload controls remain enabled.
 
 For v1.1.1, pnpm `overrides` were added to each package's `pnpm-workspace.yaml` to remediate advisories in **build-time-only** dev tooling (`electron-builder`, `wrangler`/`miniflare`, and `@capacitor/cli`). The overrides raise `fast-uri` to 4.1.1, `brace-expansion` to 5.0.8, `tar` to 7.5.21, and `sharp` to 0.35.x. These packages are used only while packaging and are **not** bundled into the Windows installer, the Android APK web assets, or the deployed Worker, so runtime calculator assets are unchanged. After the overrides, every scope (`pnpm audit`, `pnpm --dir offline-windows audit`, `pnpm --dir online-worker audit`, and `pnpm --dir offline-android audit`) reports no known vulnerabilities.
+
+For v1.1.2, a pre-release security audit re-ran `pnpm audit` across the root, `offline-windows`, `online-worker`, and `offline-android` scopes and confirmed that the v1.1.1 `pnpm.overrides` remediation continues to hold—no new Critical or High advisories were present and no additional dependency patches were required. The application remains fully clear of known vulnerabilities.
 
 ## Unofficial status
 

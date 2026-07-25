@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented in this file.
 
+## [1.1.2] — 2026-07-25
+
+### Highlights
+
+- Quality-of-life release bringing full semester-card feature parity across Windows, Android, and Web.
+
+### UI & UX
+
+- Added a per-semester cumulative **CGPA** badge beside the existing Semester GPA badge on every semester card, computed from all semesters up to that position.
+- Ported the collapsible semester card UI from Android to the offline Windows app and the online Cloudflare Worker: a chevron toggle button plus a clickable header collapse/expand the subjects body while the GPA/CGPA header stays visible, with collapsed state preserved across re-renders.
+- Subject codes and names are now auto-uppercased as typed (cursor-preserving), so saved and exported data stays academically consistent.
+
+### Maintenance
+
+- Executed cross-platform synchronization of the shared stylesheet (`shared/ui.css`) so the new badge and collapse styles reach all platforms from a single source of truth.
+- Bumped the version to **1.1.2** across the root, Windows, Android, and Worker packages.
+
 ## [1.1.1] — 2026-07-25
 
 ### Highlights

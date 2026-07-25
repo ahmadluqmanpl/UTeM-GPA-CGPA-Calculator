@@ -228,6 +228,16 @@ input, select {
 .semester-header input, .semester-header select, .semester-header button { cursor: auto; }
 .semester-header .semester-toggle, .semester-header .remove { cursor: pointer; }
 
+/* Left-side group: collapse toggle + semester title, vertically centered with a
+   consistent gap. The header's flex layout plus .semester-gpa's margin-left:auto
+   keeps this group on the far left and the badges/remove button on the right. */
+.semester-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 /* Collapse toggle button. Rotates via the .collapsed state on the card. */
 .semester-toggle {
   min-width: 38px;
@@ -255,7 +265,6 @@ input, select {
 /* Read-only positional semester title (an <h3>, not an editable input). */
 .semester-title {
   margin: 0;
-  width: min(370px, 52%);
   padding: 8px 10px;
   color: var(--ink);
   font: inherit;
@@ -268,6 +277,11 @@ input, select {
 .semester-gpa { margin-left: auto; padding: 8px 13px; text-align: right; border-radius: 10px; background: var(--utem-blue-soft); }
 .semester-gpa span { display: block; color: #61709a; font-size: 10px; font-weight: 750; letter-spacing: .8px; text-transform: uppercase; }
 .semester-gpa strong { display: block; color: var(--utem-blue); font-size: 25px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+/* Semester CGPA badge: matches the GPA badge but uses the accent (orange) palette
+   so the cumulative figure reads as a distinct, secondary metric. The first badge
+   keeps margin-left:auto; this one sits beside it. */
+.semester-cgpa { margin-left: 0; background: #fdeede; }
+.semester-cgpa strong { color: #f38020; }
 .semester-header .remove { min-height: 36px; padding: 7px 11px; }
 
 .subjects { width: 100%; border-collapse: collapse; table-layout: fixed; }
@@ -281,6 +295,8 @@ input, select {
 .subjects tbody tr:last-child td { border-bottom: 0; }
 .subjects tbody tr:hover { background: #fbfcff; }
 .subjects input, .subjects select { width: 100%; min-height: 42px; padding: 9px 11px; border: 1px solid #dbe1ea; border-radius: 9px; color: var(--ink); background: white; font: inherit; font-size: 14px; }
+/* Subject code/name text inputs display and store uppercase for consistency. */
+.subjects input[data-field="name"] { text-transform: uppercase; }
 .subjects input::placeholder { color: #a7afbd; }
 .subjects input[aria-invalid="true"] { border-color: var(--danger); background: #fff7f7; }
 .subjects .calculated { color: #5d687b; font-size: 14px; font-weight: 650; font-variant-numeric: tabular-nums; }
@@ -344,9 +360,11 @@ input, select {
   .section-heading { align-items: center; margin-top: 38px; }
   .section-heading h2 { font-size: 27px; }
   .semester-header { padding: 14px; flex-wrap: wrap; }
-  .semester-title { width: calc(100% - 68px); order: 1; font-size: 18px; }
+  .semester-title-group { order: 1; width: calc(100% - 68px); }
+  .semester-title { font-size: 18px; }
   .semester-header .remove { order: 2; margin-left: auto; }
   .semester-gpa { order: 3; width: 100%; margin-left: 0; display: flex; align-items: center; justify-content: space-between; text-align: left; }
+  .semester-cgpa { order: 4; }
 
   .subjects, .subjects tbody { display: block; }
   .subjects thead { display: none; }

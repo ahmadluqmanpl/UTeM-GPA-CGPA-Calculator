@@ -8,9 +8,9 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 <div align="center">
 
-[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1-setup.exe)
+[![Download Windows Installer](https://img.shields.io/badge/Download-Windows%20Installer-0078D4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.2-setup.exe)
 
-[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1.apk)
+[![Download Android APK](https://img.shields.io/badge/Download-Android%20APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/ahmadluqmanpl/UTeM-GPA-CGPA-Calculator/releases/latest/download/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.2.apk)
 
 [![Open Live Web App](https://img.shields.io/badge/Open-Live%20Web%20App-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://unofficial-utem-gpa-calculator.kitalemon.workers.dev/)
 
@@ -25,6 +25,9 @@ A beginner-friendly GPA and CGPA calculator for UTeM students, available as an o
 
 - Credit-weighted semester GPA and overall CGPA calculations
 - Approved UTeM grade scale with safe handling of empty or incomplete subjects
+- Per-semester cumulative CGPA shown directly on each semester card
+- Collapsible semester cards for cleaner navigation and UI management
+- Auto-uppercase formatting for subject codes and names to keep records consistent
 - Responsive, lightweight interface for laptops and phones
 - Searchable bundled UTeM programme catalogue with manual-entry fallback
 - Multiple local profiles in the offline Windows and Android apps
@@ -81,7 +84,7 @@ pnpm run build:installer
 The recommended shareable artifact is written to:
 
 ```text
-offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.1-setup.exe
+offline-windows/dist/Unofficial-UTeM-GPA-CGPA-Calculator-1.1.2-setup.exe
 ```
 
 The Windows build is currently unsigned, so Windows may display an **Unknown publisher** warning. The NSIS installer is the sole supported Windows artifact; the optional portable build has been retired. See [DEPLOYMENT.md](DEPLOYMENT.md) for release checks and packaging details.
