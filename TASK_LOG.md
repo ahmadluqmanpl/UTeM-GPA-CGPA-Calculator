@@ -1,10 +1,10 @@
 # Task Log
 
-Last updated: 2026-07-26
+Last updated: 2026-07-28
 
 ## Current task
 
-v1.1.2 release finalized. UI feature parity achieved across all platforms (collapsible semesters, cumulative CGPA tracking, auto-uppercase). Security audit passed with new Electron navigation guards and dependency patches. Remaining manual steps: compile Android APK, create Git tag, and publish the GitHub Release.
+v1.1.3 release finalized. Fixed the report-preview modal overscroll and z-index bleed-through bug across all platforms, fully centered the PDF report layout, and added cumulative CGPA to the report semester headers. Windows installer built, Android assets synced, and the Cloudflare Worker deployed. Remaining manual step: compile and sign the Android APK in Android Studio.
 
 ## Completed
 
@@ -78,6 +78,10 @@ v1.1.2 release finalized. UI feature parity achieved across all platforms (colla
 - Ported collapsible semester card UI from Android to Windows and Web, positioning the toggle button on the far left of the semester header for a balanced layout.
 - Hardened Electron security by adding a `will-navigate` guard to block unauthorized external navigation.
 - Confirmed via the v1.1.2 pre-release audit that all four `pnpm audit` scopes remain free of known vulnerabilities (the v1.1.1 `pnpm.overrides` remediation still holds), so no new dependency patches were required.
+- Fixed the report-preview modal overscroll and z-index bleed-through bug across all platforms: `overscroll-behavior: none`, a decisive `z-index: 9999`, and a fully solid modal background stop the app header from showing through during scroll bounces on Windows, Android, and Web.
+- Centered all data values in the PDF report: the Academic summary boxes (labels and large values) and every cell of the semester tables (subject name, credit, grade, grade point, and total point) are now fully centered.
+- Added cumulative CGPA tracking to the PDF report semester headers, which now read uniformly as "GPA X.XX • CGPA Y.YY • Z credit hours • W.WW grade points".
+- Prepared v1.1.3: bumped the version to 1.1.3 across root/Windows/Worker/Android packages (Android `versionCode 5` / `versionName 1.1.3`), updated README download links, rebuilt the Windows installer, synced Android web assets, and deployed the Cloudflare Worker.
 
 ## Pending
 

@@ -35,6 +35,10 @@
 
   function createReportModel({ core, validation, data, studentInfo = {}, generatedAt = new Date() }) {
     const checked = validation.validateCalculatorData(data);
+    // Track running totals so each semester can report the cumulative CGPA up
+    // to and including itself, matching the per-card CGPA shown in the app.
+    let runningCredits = 0;
+    let runningGradePoints = 0;
     const semesters = checked.semesters.map(semester => {
       const subjects = semester.subjects
         .map(subject => ({ subject, result: core.subjectResult(subject) }))
@@ -47,7 +51,10 @@
           totalGradePoint: result.totalGradePoint
         }));
       const result = core.semesterResult(semester.subjects);
-      return { name: safeText(semester.name, 60) || "Semester", subjects, ...result };
+      runningCredits += result.totalCredits;
+      runningGradePoints += result.totalGradePoints;
+      const cumulativeCgpa = runningCredits > 0 ? runningGradePoints / runningCredits : 0;
+      return { name: safeText(semester.name, 60) || "Semester", subjects, cumulativeCgpa, ...result };
     });
 
     if (!semesters.some(semester => semester.subjects.length > 0)) {
@@ -134,7 +141,7 @@
       const section = node(document, "section", "report-semester");
       const semesterHeader = node(document, "div", "report-semester-header");
       semesterHeader.append(node(document, "h2", "", semester.name));
-      const totals = node(document, "p", "", `GPA ${semester.gpa.toFixed(2)}  •  ${semester.totalCredits} credit hours  •  ${semester.totalGradePoints.toFixed(2)} grade points`);
+      const totals = node(document, "p", "", `GPA ${semester.gpa.toFixed(2)}  •  CGPA ${semester.cumulativeCgpa.toFixed(2)}  •  ${semester.totalCredits} credit hours  •  ${semester.totalGradePoints.toFixed(2)} grade points`);
       semesterHeader.append(totals);
       section.append(semesterHeader);
 
